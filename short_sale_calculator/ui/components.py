@@ -1,6 +1,6 @@
 import flet as ft
 from config import ColorScheme
-from scripts import CSVProcessor
+from scripts import CSVProcessor, ExcelProcessor # type: ignore
 import os
 
 class MainView:
@@ -67,10 +67,14 @@ class MainView:
         
         try:
             self.show_status("Processing files...", ColorScheme.PRIMARY)
-            success = self.csv_processor.combine_csvs(self.selected_files, self.output_path)
             
-            if success:
-                self.show_status("Files combined successfully!", ColorScheme.SUCCESS)
+            # Combine CSV files into a single DataFrame
+            dataframe = self.csv_processor.combine_csvs(self.selected_files)
+
+            create_Excel = ExcelProcessor(df=dataframe).Make_Excel(self.output_path)
+            
+            if create_Excel:
+                self.show_status("Excel file created successfully!", ColorScheme.SUCCESS)
             else:
                 self.show_status("Error processing files!", ColorScheme.ERROR)
         except Exception as ex:
@@ -153,8 +157,8 @@ class MainView:
                                     "Browse Output Path",
                                     icon=ft.Icons.SAVE,
                                     on_click=lambda _: self.output_picker.save_file(
-                                        file_name="combined_output.csv",
-                                        allowed_extensions=["csv"]
+                                        file_name="Capital Gain.xlsx",
+                                        allowed_extensions=["xlsx"]
                                     ),
                                     bgcolor=ColorScheme.SECONDARY,
                                     color=ColorScheme.TEXT_PRIMARY

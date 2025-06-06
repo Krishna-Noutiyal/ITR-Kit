@@ -17,7 +17,7 @@ class CSVProcessor:
             ]
 
     
-    def combine_csvs(self, file_paths: List[str], output_path: str) -> bool:
+    def combine_csvs(self, file_paths: List[str], output_path = "./") -> pd.DataFrame:
         """
         Combines multiple CSV files into a single CSV file.
         Skips the first row and uses the second row as headers.
@@ -27,7 +27,7 @@ class CSVProcessor:
             output_path: Path where the combined CSV should be saved
             
         Returns:
-            bool: True if successful, False otherwise
+            pd.DataFrame: Combined DataFrame if successful, empty DataFrame otherwise
         """
         try:
             combined_data = []
@@ -52,6 +52,17 @@ class CSVProcessor:
                 df['source_file'] = os.path.basename(file_path)
                 df['Cost - Sell'] = df['Sales Consideration - Reported by Source'] - df['Cost of Acquisition']
                 
+                # Convert the 'Date of Sale/Transfer' column to datetime if not already
+                df['Date of Sale/Transfer'] = pd.to_datetime(df['Date of Sale/Transfer'],format="%d-%b-%Y", errors='coerce', dayfirst=True)
+                
+                # Filter for short-term assets and active status
+                # Creating additional column for 31 July 2024
+                # df = df[df['Asset Type'] == "Short term"]
+                df = df[df['Status'] == "Active"]
+                df['31 July 2024'] = df['Date of Sale/Transfer'].apply(
+                    lambda x: "Before 31 July 2024" if x < pd.to_datetime("2024-07-31") else "After 31 July 2024"
+                )
+
                 # Clean up any empty rows
                 df = df.dropna(how='all')
                 
@@ -60,8 +71,8 @@ class CSVProcessor:
             
             if not combined_data:
                 print("No valid CSV files found to combine")
-                return False
-            
+                return pd.DataFrame()  # Return an empty DataFrame
+
             # Combine all dataframes
             combined_df = pd.concat(combined_data, ignore_index=True)
             print(combined_df)
@@ -70,18 +81,18 @@ class CSVProcessor:
             combined_df = combined_df.dropna(how='all')  # Remove completely empty rows
             
             # Save to output path
-            combined_df.to_csv(output_path, index=False)
+            # combined_df.to_csv(output_path, index=False)
             
-            print(f"Successfully combined {len(file_paths)} files into {output_path}")
+            # print(f"Successfully combined {len(file_paths)} files into {output_path}")
             print(f"Total data rows: {len(combined_df)}")
             print(f"Total columns: {len(combined_df.columns)}")
             
-            return True
+            return combined_df
             
         except Exception as e:
             print(f"Error combining CSV files: {str(e)}")
-            return False
-    
+            return pd.DataFrame()
+
     def get_csv_info(self, file_path: str) -> dict:
         """
         Get basic information about a CSV file, skipping the first row and using the second row as headers.
