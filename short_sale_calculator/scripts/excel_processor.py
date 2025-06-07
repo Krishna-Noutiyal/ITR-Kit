@@ -216,6 +216,11 @@ class ExcelProcessor:
             coa_short_After_23 = short_after_23["Cost of Acquisition"].sum()
             coa_long_Before_23 = long_before_23["Cost of Acquisition"].sum()
             coa_long_After_23 = long_after_23["Cost of Acquisition"].sum()
+            
+            # Profit/Loss calculations in short and long term
+            # Short term profit/loss is calculated as Full Value of Consideration - Cost of Acquisition
+            pnl_short = (fvc_sort_Before_23 + fvc_sort_After_23) - (coa_short_Before_23 + coa_short_After_23)
+            pnl_long = (fvc_long_Before_23 + fvc_long_After_23) - (coa_long_Before_23 + coa_long_After_23)
 
             print("Inserting data into the worksheet...")
 
@@ -245,7 +250,7 @@ class ExcelProcessor:
             # long Term Before 23rd July 2024 Values
             ws.write_number(7, 1, fvc_long_Before_23, formats["blank"])
             ws.write_number(7, 2, coa_long_Before_23, formats["blank"])
-            ws.write_formula(7, 3, "=ROUND((B8-C8)*10%,0)", formats["blank"])
+            ws.write_formula(7, 3, "=IF(B8-C8>100000,ROUND(((B8-C8)-100000)*10%,0),0)", formats["blank"])
             
             # long Term After 23rd July 2024 Values
             ws.write_number(8, 1, fvc_long_After_23, formats["blank"])
@@ -264,11 +269,29 @@ class ExcelProcessor:
             """ ##################### GRAND TOTAL OF TAX ##################### """
                     
             # Grand Total Tax at bottom
-            ws.merge_range(11,1,11,2, "Total Tax", formats["grey_h"])
-            ws.merge_range(11,3,11,5, "=SUM(D5,D10)", formats["black_h"])
+            ws.merge_range(10,0,10,1, "Total Tax", formats["grey_h"])
+            ws.merge_range(10,2,10,4, "=SUM(E3,E8)", formats["black_h"])
             self.workbook.close()
             
             print(f"Excel file created successfully at {file_path}")
+            
+            """ ##################### Short n Long Term Profit/Loss ##################### """
+
+            # Write the Short Term and Long Term Profit/Loss at the bottom
+            if pnl_short >= 0:
+                ws.write(11, 0, "Short Term Profit", formats["green_h"])
+            elif pnl_short < 0:
+                ws.write(11, 0, "Short Term Loss", formats["red_h"])
+
+            if pnl_long >= 0:
+                ws.write(11, 3, "Long Term Profit", formats["green_h"])
+            elif pnl_long < 0:
+                ws.write(11, 3, "Long Term Loss", formats["red_h"])
+                
+            # Write the values of Short Term and Long Term Profit/Loss
+            ws.merge_range(11, 1, 11, 2, pnl_short, formats["black_h"])
+            ws.merge_range(11, 4, 11, 5, pnl_long, formats["black_h"])
+            
             return True
         except Exception as e:
             print(f"Error creating Excel file: {str(e)}")
