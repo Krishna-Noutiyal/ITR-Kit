@@ -271,9 +271,7 @@ class ExcelProcessor:
             # Grand Total Tax at bottom
             ws.merge_range(10,0,10,1, "Total Tax", formats["grey_h"])
             ws.merge_range(10,2,10,4, "=SUM(E3,E8)", formats["black_h"])
-            self.workbook.close()
             
-            print(f"Excel file created successfully at {file_path}")
             
             """ ##################### Short n Long Term Profit/Loss ##################### """
 
@@ -289,8 +287,11 @@ class ExcelProcessor:
                 ws.write(11, 3, "Long Term Loss", formats["red_h"])
                 
             # Write the values of Short Term and Long Term Profit/Loss
-            ws.merge_range(11, 1, 11, 2, pnl_short, formats["black_h"])
-            ws.merge_range(11, 4, 11, 5, pnl_long, formats["black_h"])
+            ws.merge_range(11, 1, 11, 2, "=B5-C5", formats["black_h"])
+            ws.merge_range(11, 4, 11, 5, "=B10-C10", formats["black_h"])
+            self.workbook.close()
+            print(f"Excel file created successfully at {file_path}")
+            
             
             return True
         except Exception as e:
