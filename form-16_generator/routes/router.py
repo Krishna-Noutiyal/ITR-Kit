@@ -9,10 +9,11 @@ class Router:
     def setup_page(self):
         self.page.title = "Form 16 Generator"
         self.page.theme_mode = ft.ThemeMode.DARK
-        # self.page.window_width = 800
-        # self.page.window_height = 600
-        self.page.padding = 20
-        self.page.bgcolor = ft.Colors.BLACK87
+        self.page.auto_scroll = True
+        self.page.window.width = 1200
+        self.page.window.height = 800
+        # self.page.padding = 20
+        # self.page.expand = True
     
     def setup_main_route(self):
         main_view = MainView(self.page)

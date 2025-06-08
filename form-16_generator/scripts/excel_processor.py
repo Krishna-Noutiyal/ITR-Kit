@@ -224,8 +224,8 @@ class ExcelProcessor:
 
         print("\033[1;32m\tDetails extracted successfully:\033[0m\n")
 
-        for key, value in self.data.items():
-            print(f"\033[1;34m\t{key}:\033[0m {value}")
+        # for key, value in self.data.items():
+        #     print(f"\033[1;34m\t{key}:\033[0m {value}")
 
         return self.data
 

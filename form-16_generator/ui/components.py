@@ -9,30 +9,30 @@ class MainView:
         self.excel_processor = ExcelProcessor()
         self.selected_files = []
         self.output_path = ""
-        
+
         # UI Components
         self.file_picker = ft.FilePicker(on_result=self.on_files_selected)
         self.output_picker = ft.FilePicker(on_result=self.on_output_selected)
         self.page.overlay.extend([self.file_picker, self.output_picker])
-        
+
         self.selected_file_text = ft.Text(
             "No file selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
-        
+
         self.output_path_text = ft.Text(
             "No output path selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
-        
+
         self.status_text = ft.Text(
             "",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
-    
+
     def on_files_selected(self, e: ft.FilePickerResultEvent):
         if e.files:
             self.selected_files = [file.path for file in e.files]
@@ -44,7 +44,7 @@ class MainView:
             self.selected_file_text.value = "No file selected"
             self.selected_file_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
-    
+
     def on_output_selected(self, e: ft.FilePickerResultEvent):
         if e.path:
             self.output_path = e.path
@@ -55,39 +55,41 @@ class MainView:
             self.output_path_text.value = "No output path selected"
             self.output_path_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
-    
+
     def on_submit_clicked(self, e):
         if not self.selected_files:
             self.show_status("Please select ITR Format first!", ColorScheme.ERROR)
             return
-        
+
         if not self.output_path:
             self.show_status("Please select output path first!", ColorScheme.ERROR)
             return
-        
+
         try:
             self.show_status("Processing file...", ColorScheme.PRIMARY)
-            
+
             # Call the ExcelProcessor to create Form-16
             create_Excel = self.excel_processor.create_form_16(
-                input_file=self.selected_files[0],  # Assuming single file selection
-                output_path=self.output_path
+                itr_format=self.selected_files[0],  # Assuming single file selection
+                form_16=self.output_path,
             )
-            
+
             if create_Excel:
                 self.show_status("Form-16 Generated successfully!", ColorScheme.SUCCESS)
             else:
                 self.show_status("Error processing file!", ColorScheme.ERROR)
         except Exception as ex:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
-    
+
     def show_status(self, message: str, color: str):
         self.status_text.value = message
         self.status_text.color = color
         self.page.update()
-    
+
     def build(self):
         return ft.Container(
+            # width= self.page.width,
+            # height= self.page.height,
             content=ft.Column([
                 # Title
                 ft.Container(
@@ -121,7 +123,7 @@ class MainView:
                         ft.Container(
                             content=ft.Row([
                                 ft.ElevatedButton(
-                                    "Browse File",
+                                    "ITR Format (PIC)",
                                     icon=ft.Icons.FOLDER_OPEN,
                                     on_click=lambda _: self.file_picker.pick_files(
                                         allow_multiple=False,
@@ -148,11 +150,11 @@ class MainView:
                     margin=ft.margin.only(bottom=20)
                 ),
                 
-                # Output Path Selection Section
+                # Select Form-15 Selection Section
                 ft.Container(
                     content=ft.Column([
                         ft.Text(
-                            "Output Path:",
+                            "Select Form-16:",
                             size=18,
                             weight=ft.FontWeight.W_500,
                             color=ColorScheme.TEXT_PRIMARY
@@ -160,7 +162,7 @@ class MainView:
                         ft.Container(
                             content=ft.Row([
                                 ft.ElevatedButton(
-                                    "Output Path",
+                                    "Form-16",
                                     icon=ft.Icons.SAVE,
                                     on_click=lambda _: self.output_picker.save_file(
                                         file_name="Form-16.xlsx",
@@ -202,15 +204,16 @@ class MainView:
                         )
                     ),
                     alignment=ft.alignment.center,
-                    margin=ft.margin.only(bottom=100)
+                    margin=ft.margin.only(bottom=10)
                 ),
                 
                 # Status Text
                 ft.Container(
                     content=self.status_text,
-                    alignment=ft.alignment.center
+                    alignment=ft.alignment.center,
                 )
             ]),
             bgcolor=ColorScheme.BACKGROUND,
-            padding=20
+            padding=50,
+            expand=True
         )
