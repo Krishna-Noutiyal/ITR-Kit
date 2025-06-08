@@ -178,9 +178,9 @@ class ExcelProcessor:
         self.data["HI_parents_policy_number2"] = df.iat[10, 2]
         self.data["HI_parents_premium_amount2"] = df.iat[10, 3]
 
-        """ ################## Extracting Education Details ################## """
+        """ ################## Extracting Education Loan Details ################## """
 
-        print("\033[1;33mExtracting Education Details...\033[0m\n")
+        print("\033[1;33mExtracting Education Loan Details...\033[0m\n")
 
         # Extract Education details from the "Education Loan" sheet
         # Assuming the Education Loan details are in a specific sheet named "Education Loan"
@@ -201,11 +201,6 @@ class ExcelProcessor:
         self.data["EL_total_loan_amount2"] = df.iat[4, 4]
         self.data["EL_loan_outstanding2"] = df.iat[4, 5]
         self.data["EL_loan_interest2"] = df.iat[4, 6]
-
-        # Health Insurance Details for Self 2nd Company
-        self.data["HI_self_company_name2"] = df.iat[3, 1]
-        self.data["HI_self_policy_number2"] = df.iat[3, 2]
-        self.data["HI_self_premium_amount2"] = df.iat[3, 3]
 
         """ ################## Extracting Donation Details ################## """
 
@@ -228,6 +223,9 @@ class ExcelProcessor:
         self.data["donation_amount2"] = df.iat[4, 4]
 
         print("\033[1;32m\tDetails extracted successfully:\033[0m\n")
+
+        for key, value in self.data.items():
+            print(f"\033[1;34m\t{key}:\033[0m {value}")
 
         return self.data
 
@@ -334,6 +332,72 @@ class ExcelProcessor:
             self.ws["F5"] = details.get("HL_total_loan_amount2", "")
             self.ws["G5"] = details.get("HL_loan_outstanding2", "")
             self.ws["H5"] = details.get("HL_loan_interest2", "")
+
+            """################ Education Loan Sheet ################"""
+
+            # Load the Education Loan Sheet
+            # Now the self.ws is already set to the "Education Loan" sheet ( EL ),
+            self._select_worksheet(self.form16, sheet_name="EL")
+
+            # Education Loan Details 1st Bank
+            self.ws["C4"] = details.get("EL_bank_name", "")
+            self.ws["D4"] = details.get("EL_loan_ac_number", "")
+            self.ws["E4"] = details.get("EL_date_of_sanction", "")
+            self.ws["F4"] = details.get("EL_total_loan_amount", "")
+            self.ws["G4"] = details.get("EL_loan_outstanding", "")
+            self.ws["H4"] = details.get("EL_loan_interest", "")
+
+            # Education Loan Details 2nd Bank
+            self.ws["C5"] = details.get("EL_bank_name2", "")
+            self.ws["D5"] = details.get("EL_loan_ac_number2", "")
+            self.ws["E5"] = details.get("EL_date_of_sanction2", "")
+            self.ws["F5"] = details.get("EL_total_loan_amount2", "")
+            self.ws["G5"] = details.get("EL_loan_outstanding2", "")
+            self.ws["H5"] = details.get("EL_loan_interest2", "")
+
+            """################ Health Insurance Sheet ################"""
+
+            # Load the Health Insurance Sheet
+            # Now the self.ws is already set to the "Health Insurance" sheet ( HI ),
+            self._select_worksheet(self.form16, sheet_name="HI")
+
+            # Health Insurance Details for Self 1st Company
+            self.ws["B4"] = details.get("HI_self_company_name", "")
+            self.ws["C4"] = details.get("HI_self_policy_number", "")
+            self.ws["D4"] = details.get("HI_self_premium_amount", "")
+
+            # Health Insurance Details for Self 2nd Company
+            self.ws["B5"] = details.get("HI_self_company_name2", "")
+            self.ws["C5"] = details.get("HI_self_policy_number2", "")
+            self.ws["D5"] = details.get("HI_self_premium_amount2", "")
+
+            # Health Insurance Details for Self 1st Company
+            self.ws["B11"] = details.get("HI_parents_company_name", "")
+            self.ws["C11"] = details.get("HI_parents_policy_number", "")
+            self.ws["D11"] = details.get("HI_parents_premium_amount", "")
+
+            # Health Insurance Details for Self 2nd Company
+            self.ws["B12"] = details.get("HI_parents_company_name2", "")
+            self.ws["C12"] = details.get("HI_parents_policy_number2", "")
+            self.ws["D12"] = details.get("HI_parents_premium_amount2", "")
+
+            """################ Donation Sheet ################"""
+
+            # Load the Donation Sheet
+            # Now the self.ws is already set to the "Donation" sheet ( Donation ),
+            self._select_worksheet(self.form16, sheet_name="Donation")
+
+            # Donation Details for the 1st Donee
+            self.ws["B3"] = details.get("name_of_donee","")
+            self.ws["C3"] = details.get("address_of_donee", "")
+            self.ws["D3"] = details.get("pan_of_donee", "")
+            self.ws["E3"] = details.get("donation_amount", "")
+            
+            # Donation Details for the 2nd Donee
+            self.ws["B4"] = details.get("name_of_donee2","")
+            self.ws["C4"] = details.get("address_of_donee2", "")
+            self.ws["D4"] = details.get("pan_of_donee2", "")
+            self.ws["E4"] = details.get("donation_amount2", "")
 
             # Saving the Form-16 workbook
             self.form16.save(form_16)
