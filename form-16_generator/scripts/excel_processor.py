@@ -10,26 +10,79 @@ import xlsxwriter.worksheet
 class ExcelProcessor:
     def _select_form16(self, file_name: str, sheet_name: str = "FORM-16") -> None:
         """
-        Open an existing Excel workbook for Form-16 and select the worksheet using openpyxl.
+        Opens an existing Excel workbook for Form-16 using openpyxl and selects the specified worksheet.
+
+        This method loads the Excel file provided by `file_name` and sets the `self.form16` attribute
+        to the loaded workbook object. It then selects the worksheet specified by `sheet_name` (defaulting
+        to "FORM-16") and assigns it to the `self.ws` attribute for further processing.
 
         Args:
-            file_name (str): The name of the Excel file to open.
-            sheet_name (str, optional): The name of the worksheet to select. Defaults to "FORM-16".
+            file_name (str): The path to the Excel file to open. This should be a valid .xlsx file.
+            sheet_name (str, optional): The name of the worksheet to select from the workbook.
+            Defaults to "FORM-16".
+
+        Raises:
+            FileNotFoundError: If the specified Excel file does not exist.
+            KeyError: If the specified worksheet name does not exist in the workbook.
+
+        Side Effects:
+            Sets self.form16 to the loaded openpyxl workbook.
+            Sets self.ws to the selected worksheet within the workbook.
         """
         self.form16 = openpyxl.load_workbook(file_name)
         self.ws = self.form16[sheet_name]
 
     def _extract_details(self, file_path: str, sheet_name: str = "ITR Format") -> dict:
         """
-        Extract details from the ITR format worksheet using pandas.
+        Extract various financial and personal details from multiple sheets of the provided Excel file.
+
+        Reads the specified worksheet (default "ITR Format") and additional sheets such as
+        "Home Loan", "Health Insurance", "Education Loan", and "Donation" to extract relevant information.
+        Parses key-value pairs, lists, and specific cell values to build a dictionary containing all
+        required details for Form-16 generation.
 
         Args:
-            file_path (str): The path to the Excel file.
-            sheet_name (str, optional): The name of the worksheet to extract from.
+            file_path (str): Path to the Excel file containing the data.
+            sheet_name (str, optional): Worksheet name to extract general details from. Defaults to "ITR Format".
+
         Returns:
-            dict: A dictionary containing extracted details.
+            dict: Extracted details, including
+
+            #### General taxpayer info (from "ITR Format" sheet):
+            - Keys: {field_name: value, ...}
+            - List keys: {field_name: [value1, value2], ...}
+            - Password: {"passwd": value}
+
+            #### Home loan details (from "Home Loan" sheet):
+            - Keys: "bank_name", "loan_ac_number", "date_of_sanction", "total_loan_amount",
+              "loan_outstanding", "loan_interest", "bank_name2", "loan_ac_number2",
+              "date_of_sanction2", "total_loan_amount2", "loan_outstanding2", "loan_interest2"
+
+            #### Health insurance details (from "Health Insurance" sheet):
+            - Keys: "HI_self_company_name", "HI_self_policy_number", "HI_self_premium_amount",
+              "HI_self_company_name2", "HI_self_policy_number2", "HI_self_premium_amount2",
+              "HI_parents_company_name", "HI_parents_policy_number", "HI_parents_premium_amount",
+              "HI_parents_company_name2", "HI_parents_policy_number2", "HI_parents_premium_amount2"
+
+            #### Education loan details (from "Education Loan" sheet):
+            - Keys: "EL_bank_name", "EL_loan_ac_number", "EL_date_of_sanction", "EL_total_loan_amount",
+              "EL_loan_outstanding", "EL_loan_interest", "EL_bank_name2", "EL_loan_ac_number2",
+              "EL_date_of_sanction2", "EL_total_loan_amount2", "EL_loan_outstanding2", "EL_loan_interest2"
+
+            #### Donation details (from "Donation" sheet):
+            - Keys: "pan_of_donee", "name_of_donee", "address_of_donee", "donation_amount",
+              "pan_of_donee2", "name_of_donee2", "address_of_donee2", "donation_amount2"
+
+        Raises:
+            FileNotFoundError: If the specified Excel file does not exist.
+            ValueError: If any required sheet or cell is missing or cannot be read.
+
+        Side Effects:
+            Populates self.data with the extracted information.
         """
         self.data = {}
+
+        print("\033[1;37m\033[1mStarting extraction...\033[0m\n")
         df = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
         # Extract key-value pairs from B5:C20 (Excel is 1-indexed, pandas is 0-indexed)
         for row in range(4, 20):  # B5 is row 4 (0-indexed), C20 is row 19
@@ -51,19 +104,109 @@ class ExcelProcessor:
         self.data["passwd"] = df.iat[
             12, 3
         ]  # D13 is row 12 (0-indexed), column 3 (0-indexed)
-        for key, value in self.data.items():
-            print(f"{key} : {value}")
 
+        """ ################## Extracting Home Loan Details ################## """
+
+        print("\033[1;33mExtracting Home Loan Details...\033[0m\n")
+
+        # Extract Home Loan details from the "Home Loan" sheet
+        # Assuming the Home Loan details are in a specific sheet named "Home Loan"
         df = pd.read_excel(file_path, sheet_name="Home Loan", header=None)
-        
+
+        # Home Loan Details 1st Bank
         self.data["bank_name"] = df.iat[3, 1]
         self.data["loan_ac_number"] = df.iat[3, 2]  
         self.data["date_of_sanction"] = df.iat[3, 3]  
         self.data["total_loan_amount"] = df.iat[3, 4]
+        self.data["loan_outstanding"] = df.iat[3, 5]
+        self.data["loan_interest"] = df.iat[3, 6]
+
+        # Home Loan Details 2nd Bank
         self.data["bank_name2"] = df.iat[4, 1]
         self.data["loan_ac_number2"] = df.iat[4, 2]  
         self.data["date_of_sanction2"] = df.iat[4, 3]  
         self.data["total_loan_amount2"] = df.iat[4, 4]
+        self.data["loan_outstanding2"] = df.iat[4, 5]
+        self.data["loan_interest2"] = df.iat[4, 6]
+
+        """ ################## Extracting Health Insurance Details ################## """
+
+        print("\033[1;32mExtracting Health Insurance Details...\033[0m\n")
+
+        # Extract Health Insurance details from the "Health Insurance" sheet
+        # Assuming the Health Insurance details are in a specific sheet named "Health Insurance"
+        df = pd.read_excel(file_path, sheet_name="Health Insurance", header=None)
+
+        # Health Insurance Details for Self 1st Company
+        self.data["HI_self_company_name"] = df.iat[2, 1]
+        self.data["HI_self_policy_number"] = df.iat[2, 2]
+        self.data["HI_self_premium_amount"] = df.iat[2, 3]
+
+        # Health Insurance Details for Self 2nd Company
+        self.data["HI_self_company_name2"] = df.iat[3, 1]
+        self.data["HI_self_policy_number2"] = df.iat[3, 2]
+        self.data["HI_self_premium_amount2"] = df.iat[3, 3]
+
+        # Health Insurance Details for Parents
+        self.data["HI_parents_company_name"] = df.iat[9, 1]
+        self.data["HI_parents_policy_number"] = df.iat[9, 2]
+        self.data["HI_parents_premium_amount"] = df.iat[9, 3]
+
+        # Health Insurance Details for Parents 2nd Company
+        self.data["HI_parents_company_name2"] = df.iat[10, 1]
+        self.data["HI_parents_policy_number2"] = df.iat[10, 2]
+        self.data["HI_parents_premium_amount2"] = df.iat[10, 3]
+
+        """ ################## Extracting Education Details ################## """
+
+        print("\033[1;33mExtracting Education Details...\033[0m\n")
+
+        # Extract Education details from the "Education Loan" sheet
+        # Assuming the Education Loan details are in a specific sheet named "Education Loan"
+        df = pd.read_excel(file_path, sheet_name="Education Loan", header=None)
+
+        # Education Loan Details 1st Bank
+        self.data["EL_bank_name"] = df.iat[3, 1]
+        self.data["EL_loan_ac_number"] = df.iat[3, 2]
+        self.data["EL_date_of_sanction"] = df.iat[3, 3]
+        self.data["EL_total_loan_amount"] = df.iat[3, 4]
+        self.data["EL_loan_outstanding"] = df.iat[3, 5]
+        self.data["EL_loan_interest"] = df.iat[3, 6]
+
+        # Education Loan Details 2nd Bank
+        self.data["EL_bank_name2"] = df.iat[4, 1]
+        self.data["EL_loan_ac_number2"] = df.iat[4, 2]
+        self.data["EL_date_of_sanction2"] = df.iat[4, 3]
+        self.data["EL_total_loan_amount2"] = df.iat[4, 4]
+        self.data["EL_loan_outstanding2"] = df.iat[4, 5]
+        self.data["EL_loan_interest2"] = df.iat[4, 6]
+
+        # Health Insurance Details for Self 2nd Company
+        self.data["HI_self_company_name2"] = df.iat[3, 1]
+        self.data["HI_self_policy_number2"] = df.iat[3, 2]
+        self.data["HI_self_premium_amount2"] = df.iat[3, 3]
+
+        """ ################## Extracting Donation Details ################## """
+
+        print("\033[1;33mExtracting Donation Details...\033[0m\n")
+
+        # Extract Donation details from the "Donation" sheet
+        # Assuming the Donation details are in a specific sheet named "Donation"
+        df = pd.read_excel(file_path, sheet_name="Donation", header=None)
+
+        # Donation Details 1st Organization
+        self.data["pan_of_donee"] = df.iat[3, 1]
+        self.data["name_of_donee"] = df.iat[3, 2]
+        self.data["address_of_donee"] = df.iat[3, 3]
+        self.data["donation_amount"] = df.iat[3, 4]
+
+        # Donation Details 2nd Organization
+        self.data["pan_of_donee2"] = df.iat[4, 1]
+        self.data["name_of_donee2"] = df.iat[4, 2]
+        self.data["address_of_donee2"] = df.iat[4, 3]
+        self.data["donation_amount2"] = df.iat[4, 4]
+
+        print("\033[1;32m\tDetails extracted successfully:\033[0m\n")
 
         return self.data
 
@@ -72,8 +215,62 @@ class ExcelProcessor:
         Create Form-16 from the given ITR format file.
         """
         try:
-            self._select_form16(form_16)
+            # Extract details from the ITR format file
             details = self._extract_details(itr_format)
+
+            # Load the Form-16 template
+            self._select_form16(form_16, sheet_name="FORM-16")
+
+            # Update the value of cell A1 in the worksheet
+            # Write "Name, Designation, Department" in cell A1 using values from details dict
+            name = details.get("Name", "")
+            designation = details.get("Designation", "")
+            department = details.get("Department/Company", "")
+            self.ws["A1"] = f"{name}, {designation}, {department}".upper()
+
+            """################ Income from Other Sources ################"""
+
+            self.ws["C35"] = details.get("Interest on Saving A/c", "")[0]
+            self.ws["C36"] = details.get("Interest on FD/RD/MIS", "")[0]
+
+            """################ Deductions under 80C ################"""
+
+            self.ws["F44"] = details.get("NPS PRAN No. (NPS Employee)", "")
+            self.ws["F45"] = details.get("PF A/c No. (GPF/EPF Employee)", "")
+
+            fields = [
+                "LIC",
+                "PPF",
+                "SSY",
+                "PLI",
+                "Tuition Fees",
+                "ELSS (Tax Saver Mutual Fund)",
+                "ULIP",
+                "NSC",
+                "Senior Citizen Saving Scheme (SCSS)",
+                "FD 05 Years (Tax Saving)",
+                "Stamp Duty (Plot/Property)",
+                "Home Loan Principal",
+            ]
+            for i, field in enumerate(fields):
+                cell = f"C{49 + i}"
+                self.ws[cell] = details.get(field, "")[0]
+
+            """################ 80CCD(1B) -NPS Employee Contribution ################"""
+
+            # NPS PRAN No. (NPS Employee)
+            self.ws["F63"] = details.get("NPS PRAN No. (NPS Employee)", "")
+
+
+            """################ 80D - Deductions for Medical Expenses ################"""
+            
+            # Preventive Health Checkup Expenses for Employee and Family
+            phc_self = details.get("Health Checkup Exp (Employee & family)", "")[0]
+            self.ws["C68"] = phc_self if (phc_self <= 5000) else 5000
+
+            # Preventive Health Checkup Expenses for Parents
+            phc_parents = details.get("Medical Exp (If Parents are Senior Citizen)", "")[0]
+            self.ws["C73"] = phc_parents if (phc_parents <= 50000) else 50000
 
             self.form16.save(form_16)
             self.form16.close()
