@@ -91,7 +91,7 @@ class MainView:
                 # Title
                 ft.Container(
                     content=ft.Text(
-                        "Short Sale Calculator",
+                        "Capital Gain Calculator",
                         size=32,
                         weight=ft.FontWeight.BOLD,
                         color=ColorScheme.PRIMARY
@@ -102,13 +102,12 @@ class MainView:
                 # Description
                 ft.Container(
                     content=ft.Text(
-                        "Hello, please select the files (csv) to perform operations.",
+                        "Hello, please select the CG files (csv) downloaded from AIS portal to perform operations.\n",
                         size=16,
                         color=ColorScheme.TEXT_SECONDARY
                     ),
                     margin=ft.margin.only(bottom=30)
                 ),
-                
                 # File Selection Section
                 ft.Container(
                     content=ft.Column([
@@ -128,7 +127,13 @@ class MainView:
                                         allowed_extensions=["csv"]
                                     ),
                                     bgcolor=ColorScheme.PRIMARY,
-                                    color=ft.Colors.WHITE
+                                    color=ft.Colors.WHITE,
+                                    width=200,
+                                    height=50,
+                                    style=ft.ButtonStyle(
+                                        text_style=ft.TextStyle(size=16,weight=ft.FontWeight.BOLD)  # Increased text size
+                                        
+                                    ),
                                 )
                             ]),
                             margin=ft.margin.only(top=5, bottom=10)
@@ -146,7 +151,7 @@ class MainView:
                 ft.Container(
                     content=ft.Column([
                         ft.Text(
-                            "Select Output Path:",
+                            "Output Path:",
                             size=18,
                             weight=ft.FontWeight.W_500,
                             color=ColorScheme.TEXT_PRIMARY
@@ -154,14 +159,20 @@ class MainView:
                         ft.Container(
                             content=ft.Row([
                                 ft.ElevatedButton(
-                                    "Browse Output Path",
+                                    "Output Path",
                                     icon=ft.Icons.SAVE,
                                     on_click=lambda _: self.output_picker.save_file(
                                         file_name="Capital Gain.xlsx",
                                         allowed_extensions=["xlsx"]
                                     ),
                                     bgcolor=ColorScheme.SECONDARY,
-                                    color=ColorScheme.TEXT_PRIMARY
+                                    color=ColorScheme.TEXT_PRIMARY,
+                                    width=200,
+                                    height=50,
+                                    style=ft.ButtonStyle(
+                                        text_style=ft.TextStyle(size=16,weight=ft.FontWeight.BOLD)  # Increased text size
+                                        
+                                    ),
                                 )
                             ]),
                             margin=ft.margin.only(top=5, bottom=10)
