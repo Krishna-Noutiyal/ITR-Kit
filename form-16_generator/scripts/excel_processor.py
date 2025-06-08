@@ -1,4 +1,5 @@
 import glob, os
+import openpyxl.worksheet
 import pandas as pd
 from dataclasses import dataclass
 import xlsxwriter
@@ -30,7 +31,27 @@ class ExcelProcessor:
             Sets self.ws to the selected worksheet within the workbook.
         """
         self.form16 = openpyxl.load_workbook(file_name)
-        self.ws = self.form16[sheet_name]
+        self._select_worksheet(self.form16, sheet_name)
+
+    def _select_worksheet(self, workbook: openpyxl.Workbook, sheet_name: str) -> None:
+        """
+        Selects a worksheet from an openpyxl workbook by name and assigns it to self.ws.
+
+        This method takes an openpyxl Workbook object and a worksheet name, and sets the
+        self.ws attribute to the corresponding worksheet. It is used internally after loading
+        a workbook to prepare for further processing or data manipulation.
+
+        Args:
+            workbook (openpyxl.Workbook): The loaded Excel workbook object.
+            sheet_name (str): The name of the worksheet to select.
+
+        Raises:
+            KeyError: If the specified worksheet name does not exist in the workbook.
+
+        Side Effects:
+            Sets self.ws to the selected worksheet within the workbook.
+        """
+        self.ws = workbook[sheet_name]
 
     def _extract_details(self, file_path: str, sheet_name: str = "ITR Format") -> dict:
         """
@@ -114,20 +135,20 @@ class ExcelProcessor:
         df = pd.read_excel(file_path, sheet_name="Home Loan", header=None)
 
         # Home Loan Details 1st Bank
-        self.data["bank_name"] = df.iat[3, 1]
-        self.data["loan_ac_number"] = df.iat[3, 2]  
-        self.data["date_of_sanction"] = df.iat[3, 3]  
-        self.data["total_loan_amount"] = df.iat[3, 4]
-        self.data["loan_outstanding"] = df.iat[3, 5]
-        self.data["loan_interest"] = df.iat[3, 6]
+        self.data["HL_bank_name"] = df.iat[3, 1]
+        self.data["HL_loan_ac_number"] = df.iat[3, 2]
+        self.data["HL_date_of_sanction"] = df.iat[3, 3]
+        self.data["HL_total_loan_amount"] = df.iat[3, 4]
+        self.data["HL_loan_outstanding"] = df.iat[3, 5]
+        self.data["HL_loan_interest"] = df.iat[3, 6]
 
         # Home Loan Details 2nd Bank
-        self.data["bank_name2"] = df.iat[4, 1]
-        self.data["loan_ac_number2"] = df.iat[4, 2]  
-        self.data["date_of_sanction2"] = df.iat[4, 3]  
-        self.data["total_loan_amount2"] = df.iat[4, 4]
-        self.data["loan_outstanding2"] = df.iat[4, 5]
-        self.data["loan_interest2"] = df.iat[4, 6]
+        self.data["HL_bank_name2"] = df.iat[4, 1]
+        self.data["HL_loan_ac_number2"] = df.iat[4, 2]
+        self.data["HL_date_of_sanction2"] = df.iat[4, 3]
+        self.data["HL_total_loan_amount2"] = df.iat[4, 4]
+        self.data["HL_loan_outstanding2"] = df.iat[4, 5]
+        self.data["HL_loan_interest2"] = df.iat[4, 6]
 
         """ ################## Extracting Health Insurance Details ################## """
 
@@ -215,9 +236,12 @@ class ExcelProcessor:
         Create Form-16 from the given ITR format file.
         """
         try:
+
+            """################ Detail Extraction ################"""
             # Extract details from the ITR format file
             details = self._extract_details(itr_format)
 
+            """################ Form-16 Sheet ################"""
             # Load the Form-16 template
             self._select_form16(form_16, sheet_name="FORM-16")
 
@@ -261,17 +285,57 @@ class ExcelProcessor:
             # NPS PRAN No. (NPS Employee)
             self.ws["F63"] = details.get("NPS PRAN No. (NPS Employee)", "")
 
-
             """################ 80D - Deductions for Medical Expenses ################"""
-            
+
             # Preventive Health Checkup Expenses for Employee and Family
             phc_self = details.get("Health Checkup Exp (Employee & family)", "")[0]
             self.ws["C68"] = phc_self if (phc_self <= 5000) else 5000
 
             # Preventive Health Checkup Expenses for Parents
-            phc_parents = details.get("Medical Exp (If Parents are Senior Citizen)", "")[0]
+            phc_parents = details.get(
+                "Medical Exp (If Parents are Senior Citizen)", ""
+            )[0]
             self.ws["C73"] = phc_parents if (phc_parents <= 50000) else 50000
 
+            """################ IT Calculation Sheet ################"""
+
+            # Load the IT Calculation Sheet
+            # Now the self.ws is already set to the "IT Calculation" sheet,
+            self._select_worksheet(self.form16, sheet_name="IT Calculation")
+
+            self.ws["D18"] = details.get("TDS/Tax Deducted", "")[0]
+
+            """################ HRA Sheet ################"""
+
+            # Load the HRA Sheet
+            # Now the self.ws is already set to the "HRA" sheet,
+            self._select_worksheet(self.form16, sheet_name="HRA")
+
+            self.ws["C4"] = details.get("House Rent", "")[0]
+
+            """################ Home Loan Sheet ################"""
+
+            # Load the Home Loan Sheet
+            # Now the self.ws is already set to the "Home Loan" sheet ( HL ),
+            self._select_worksheet(self.form16, sheet_name="HL")
+
+            # Home Loan Details 1st Bank
+            self.ws["C4"] = details.get("HL_bank_name", "")
+            self.ws["D4"] = details.get("HL_loan_ac_number", "")
+            self.ws["E4"] = details.get("HL_date_of_sanction", "")
+            self.ws["F4"] = details.get("HL_total_loan_amount", "")
+            self.ws["G4"] = details.get("HL_loan_outstanding", "")
+            self.ws["H4"] = details.get("HL_loan_interest", "")
+
+            # Home Loan Details 2nd Bank
+            self.ws["C5"] = details.get("HL_bank_name2", "")
+            self.ws["D5"] = details.get("HL_loan_ac_number2", "")
+            self.ws["E5"] = details.get("HL_date_of_sanction2", "")
+            self.ws["F5"] = details.get("HL_total_loan_amount2", "")
+            self.ws["G5"] = details.get("HL_loan_outstanding2", "")
+            self.ws["H5"] = details.get("HL_loan_interest2", "")
+
+            # Saving the Form-16 workbook
             self.form16.save(form_16)
             self.form16.close()
 
