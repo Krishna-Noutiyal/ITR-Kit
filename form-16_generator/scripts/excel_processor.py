@@ -107,20 +107,16 @@ class ExcelProcessor:
             value = df.iat[row, 2]  # Column C (0:Serial_No, so index 2)
 
             # Only add to dictionary if both key and value are not NaN
-            if pd.notna(key) and pd.notna(value):
-                self.data[key] = value
+            self.data[key] = value
 
         # Extract key-list pairs from B22:D51 (Excel is 1-indexed, pandas is 0-indexed)
         for row in range(21, 51):  # B22 is row 21, D51 is row 50
             key = df.iat[row, 1]  # Column B (index 1)
             val1 = df.iat[row, 2]  # Column C (index 2)
             val2 = df.iat[row, 3]  # Column D (index 3)
-            if pd.notna(key) and (pd.notna(val1) or pd.notna(val2)):
-                self.data[key] = [val1, val2]
-
-        self.data["passwd"] = df.iat[
-            12, 3
-        ]  # D13 is row 12 (0-indexed), column 3 (0-indexed)
+            self.data[key] = [val1,val2]
+        # D13 is row 12 (0-indexed), column 3 (0-indexed)
+        self.data["passwd"] = df.iat[12, 3]  
 
         """ ################## Extracting Home Loan Details ################## """
 
@@ -220,8 +216,8 @@ class ExcelProcessor:
 
         print("\033[1;32m\tDetails extracted successfully:\033[0m\n")
 
-        # for key, value in self.data.items():
-        #     print(f"\033[1;34m\t{key}:\033[0m {value}")
+        for key, value in self.data.items():
+            print(f"\033[1;34m\t{key}:\033[0m {value}")
 
         return self.data
 
@@ -388,7 +384,7 @@ class ExcelProcessor:
             self.ws["C3"] = details.get("address_of_donee", "")
             self.ws["D3"] = details.get("pan_of_donee", "")
             self.ws["E3"] = details.get("donation_amount", "")
-            
+
             # Donation Details for the 2nd Donee
             self.ws["B4"] = details.get("name_of_donee2","")
             self.ws["C4"] = details.get("address_of_donee2", "")

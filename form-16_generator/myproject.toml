@@ -1,0 +1,21 @@
+[project]
+name = "Sola"
+version = "0.1.0"
+description = "Created by Krish to Automate Form-16 Generation using ITR Format. Created for POOJA ITR CENTER"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Krishna Noutiyal"}
+]
+dependencies = [
+  "flet","openpyxl","pandas"
+]
+
+[tool.flet]
+product = "Sola"
+company = "Krish Corp."
+copyright = "Copyright (C) 2025 Krish Corp."
+
+[tool.flet.app]
+path = "src"
+icon = "icons/icon_V2.ico"
