@@ -1,0 +1,18 @@
+[project]
+name = "CryptAIS"
+version = "1.0"
+description = "Created by Krish to Automate Crypto Calculation of AIS Crypto Data"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Krishna Noutiyal"}
+]
+dependencies = [
+  "flet","openpyxl","pandas"
+]
+
+[tool.flet]
+product = "CryptAIS"
+company = "Pooja ITR Center"
+copyright = "Copyright (C) 2025 Pooja ITR Center"
+
