@@ -1,6 +1,6 @@
 [project]
 name = "Sola"
-version = "0.1.0"
+version = "0.1.1"
 description = "Created by Krish to Automate Form-16 Generation using ITR Format. Created for POOJA ITR CENTER"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -13,8 +13,8 @@ dependencies = [
 
 [tool.flet]
 product = "Sola"
-company = "Krish Corp."
-copyright = "Copyright (C) 2025 Krish Corp."
+company = "Pooja ITR Center"
+copyright = "Copyright (C) 2025 Pooja ITR Center"
 
 [tool.flet.app]
 path = "src"
