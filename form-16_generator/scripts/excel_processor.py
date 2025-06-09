@@ -1,5 +1,6 @@
 import pandas as pd
 from dataclasses import dataclass
+from math import isnan
 import openpyxl
 
 
@@ -114,9 +115,9 @@ class ExcelProcessor:
             key = df.iat[row, 1]  # Column B (index 1)
             val1 = df.iat[row, 2]  # Column C (index 2)
             val2 = df.iat[row, 3]  # Column D (index 3)
-            self.data[key] = [val1,val2]
+            self.data[key] = [val1, val2]
         # D13 is row 12 (0-indexed), column 3 (0-indexed)
-        self.data["passwd"] = df.iat[12, 3]  
+        self.data["passwd"] = df.iat[12, 3]
 
         """ ################## Extracting Home Loan Details ################## """
 
@@ -267,8 +268,11 @@ class ExcelProcessor:
                 "Home Loan Principal",
             ]
             for i, field in enumerate(fields):
-                cell = f"C{49 + i}"
-                self.ws[cell] = details.get(field, "")[0]
+                saving_name = f"C{49 + i}"
+                document_number = f"F{49 + i}"
+
+                self.ws[saving_name] = details.get(field, "")[0]
+                self.ws[document_number] = details.get(field, "")[1]
 
             """################ 80CCD(1B) -NPS Employee Contribution ################"""
 
@@ -279,13 +283,25 @@ class ExcelProcessor:
 
             # Preventive Health Checkup Expenses for Employee and Family
             phc_self = details.get("Health Checkup Exp (Employee & family)", "")[0]
-            self.ws["C68"] = phc_self if (phc_self <= 5000) else 5000
+
+            if not isnan(phc_self):
+                self.ws["C68"] = (
+                    phc_self if ((phc_self <= 5000)) else 5000
+                )
+            else:
+                self.ws["C68"] = 0
 
             # Preventive Health Checkup Expenses for Parents
             phc_parents = details.get(
                 "Medical Exp (If Parents are Senior Citizen)", ""
             )[0]
-            self.ws["C73"] = phc_parents if (phc_parents <= 50000) else 50000
+            
+            if not isnan(phc_parents):
+                self.ws["C73"] = (
+                    phc_parents if (phc_parents <= 50000) else 50000
+                )
+            else:
+                self.ws["C73"] = 0
 
             """################ IT Calculation Sheet ################"""
 
@@ -380,13 +396,13 @@ class ExcelProcessor:
             self._select_worksheet(self.form16, sheet_name="Donation")
 
             # Donation Details for the 1st Donee
-            self.ws["B3"] = details.get("name_of_donee","")
+            self.ws["B3"] = details.get("name_of_donee", "")
             self.ws["C3"] = details.get("address_of_donee", "")
             self.ws["D3"] = details.get("pan_of_donee", "")
             self.ws["E3"] = details.get("donation_amount", "")
 
             # Donation Details for the 2nd Donee
-            self.ws["B4"] = details.get("name_of_donee2","")
+            self.ws["B4"] = details.get("name_of_donee2", "")
             self.ws["C4"] = details.get("address_of_donee2", "")
             self.ws["D4"] = details.get("pan_of_donee2", "")
             self.ws["E4"] = details.get("donation_amount2", "")
