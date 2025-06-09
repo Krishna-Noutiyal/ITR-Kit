@@ -1,0 +1,1 @@
+flet build windows --project "Form-16 Generator" --description "Created by Krish to Automate Form-16 Generation using ITR Format. Created for POOJA ITR CENTER" --product "Form-16 Generator" --clear-cache --compile-app --compile-packages --cleanup-app --skip-flutter-doctor --module-name .\main.py
