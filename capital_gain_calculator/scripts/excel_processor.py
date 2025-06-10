@@ -290,19 +290,45 @@ class ExcelProcessor:
             self._create_worksheet("Capital Gains Data")
 
             # Set cell dimensions for the data worksheet
-            self._set_cell_dimensions(width=26, height=96)
-
+            self._set_cell_dimensions()
             data_ws = self.worksheet
             data_formats = self._add_formats()
+            
+            # Set header row height and column widths
+            data_ws.set_row(0, 55)
+            data_ws.set_column(0, self.df.shape[1] - 1, 26)
+            # Set data row heights (from row 1 onwards)
+            for row_num in range(1, len(self.df) + 2):  # +2 to include totals row
+                data_ws.set_row(row_num, 30)
 
-            # Write the header with formatting
-            for col_num, col_name in enumerate(self.df.columns):
-                data_ws.write(0, col_num, col_name, data_formats["orange_h"])
+
+                # Write the header with formatting (font size 16)
+                header_format = self.workbook.add_format({
+                    **{
+                        'align': 'center',
+                        'valign': 'vcenter',
+                        'text_wrap': True,
+                        'bold': True,
+                        'bg_color': '#E97132',
+                        'font_size': 16
+                    }
+                })
+                for col_num, col_name in enumerate(self.df.columns):
+                    data_ws.write(0, col_num, col_name, header_format)
 
             # Write the data rows
             for row_num, row in enumerate(self.df.itertuples(index=False), start=1):
                 for col_num, value in enumerate(row):
-                    fmt = data_formats["blank"]
+                    # Set font size 11 for the first cell (first column, first data row)
+                    if col_num == 0:
+                        fmt = self.workbook.add_format({
+                            'align': 'center',
+                            'valign': 'vcenter',
+                            'text_wrap': True,
+                            "font_size": 11
+                        })
+                    else:
+                        fmt = data_formats["blank"]
                     if isinstance(value, (int, float)):
                         data_ws.write_number(row_num, col_num, value, fmt)
                     else:

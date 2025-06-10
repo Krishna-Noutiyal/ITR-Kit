@@ -7,7 +7,7 @@ class Router:
         self.setup_page()
     
     def setup_page(self):
-        self.page.title = "Capital Gain Calculator"
+        self.page.title = "CGC"
         self.page.theme_mode = ft.ThemeMode.DARK
         # self.page.window_width = 800
         self.page.window.height = 800

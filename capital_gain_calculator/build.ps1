@@ -1,8 +1,8 @@
 flet build windows `
---project "CryptoAIS" `
+--project "CGS" `
 --company "Pooja ITR Center" `
---description "Cryptocurrency Trade calculatore that updated Form-16 for Crypto Calculations" `
---product "CryptoAIS" `
+--description "A tool for Generating Capital Gain Data For ITR filing. Uses AIS's Capital Gain Data" `
+--product "CGS" `
 --build-version "1.0.1" `
 --company "Pooja ITR Center" `
 --copyright "Copyright (C) 2025 Pooja ITR Center" `
