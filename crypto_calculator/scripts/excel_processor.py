@@ -11,7 +11,7 @@ import datetime as dt
 @dataclass
 class ExcelProcessor:
 
-    def _select_workbook(self, file_name: str, sheet_name: str = "FORM-16") -> None:
+    def _select_workbook(self, file_name: str, sheet_name: str = "Crypto") -> None:
         """
         Opens an existing Excel workbook for Form-16 using openpyxl and selects the specified worksheet.
 
@@ -54,7 +54,8 @@ class ExcelProcessor:
             Sets self.ws to the selected worksheet within the workbook.
         """
         try:
-            self.ws = self.workbook[sheet_name]
+            self.ws = workbook[sheet_name]
+            workbook.active = workbook[sheet_name]
             # Sheet exists, use it
         except KeyError:
             # Sheet doesn't exist
@@ -265,12 +266,12 @@ class ExcelProcessor:
             cell.number_format = "General"
         # You can add more types/formats as needed
 
-    def make_dashboard(self, file_name: str, df: pd.DataFrame, sheet_name: str = "crypto") -> None:
+    def make_dashboard(self, form_16: str, df: pd.DataFrame, sheet_name: str = "Crypto") -> bool:
         """
         Creates the Dashboard for crypto Calculations
         """
 
-        self._select_workbook(file_name, sheet_name)
+        self._select_workbook(form_16, sheet_name)
 
         self._add_formats()
 
@@ -427,7 +428,9 @@ class ExcelProcessor:
         self.set(tcr_value, tcr_formula, "green_h")
 
         self.workbook.close()
-        self.workbook.save(file_name)
+        self.workbook.save(form_16)
+        
+        return True
 
 
 if __name__ == "__main__":

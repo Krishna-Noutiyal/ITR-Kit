@@ -1,12 +1,13 @@
 import flet as ft
 from config import ColorScheme
-from scripts import ExcelProcessor # type: ignore
+from scripts import CSVProcessor, ExcelProcessor # type: ignore
 import os
 
 class MainView:
     def __init__(self, page: ft.Page):
         self.page = page
         self.excel_processor = ExcelProcessor()
+        self.csv_processor = CSVProcessor()
         self.selected_files = []
         self.output_path = ""
 
@@ -22,7 +23,7 @@ class MainView:
         )
 
         self.output_path_text = ft.Text(
-            "No output path selected",
+            "No Form-16 selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
@@ -37,11 +38,11 @@ class MainView:
         if e.files:
             self.selected_files = [file.path for file in e.files]
             file_names = [os.path.basename(path) for path in self.selected_files]
-            self.selected_file_text.value = f"Selected {len(self.selected_files)} file: {', '.join(file_names)}"
+            self.selected_file_text.value = f"Selected {len(self.selected_files)} files: {', '.join(file_names)}"
             self.selected_file_text.color = ColorScheme.SUCCESS
         else:
             self.selected_files = []
-            self.selected_file_text.value = "No file selected"
+            self.selected_file_text.value = "No files selected"
             self.selected_file_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
@@ -58,21 +59,19 @@ class MainView:
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select ITR Format first!", ColorScheme.ERROR)
+            self.show_status("Please select AIS Crypto CSVs First!", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select output path first!", ColorScheme.ERROR)
+            self.show_status("Please select form-16 First!", ColorScheme.ERROR)
             return
 
         try:
-            self.show_status("Processing file...", ColorScheme.PRIMARY)
-
+            self.show_status("Processing files...", ColorScheme.PRIMARY)
+            
+            crypto_data = self.csv_processor.combine_csvs(self.selected_files)
             # Call the ExcelProcessor to create Form-16
-            create_Excel = self.excel_processor.create_form_16(
-                itr_format=self.selected_files[0],  # Assuming single file selection
-                form_16=self.output_path,
-            )
+            create_Excel = self.excel_processor.make_dashboard(self.output_path,crypto_data)
 
             if create_Excel:
                 self.show_status("Form-16 Generated successfully!", ColorScheme.SUCCESS)
@@ -94,7 +93,7 @@ class MainView:
                 # Title
                 ft.Container(
                     content=ft.Text(
-                        "Form 16 Generator",
+                        "CryptoAIS : Crypto Calculator",
                         size=32,
                         weight=ft.FontWeight.BOLD,
                         color=ColorScheme.PRIMARY
@@ -105,7 +104,7 @@ class MainView:
                 # Description
                 ft.Container(
                     content=ft.Text(
-                        "Hello, please select the ITR formate that you created and the desired Form-16 (xlsx) file to generate.\n",
+                        "Hello, please select the AIS Crypto CSVs that you downladed from the AIS portal \nand the desired Form-16 (xlsx) file to generate Crypto Calculations.\n",
                         size=16,
                         color=ColorScheme.TEXT_SECONDARY
                     ),
@@ -115,7 +114,7 @@ class MainView:
                 ft.Container(
                     content=ft.Column([
                         ft.Text(
-                            "Select ITR Format:",
+                            "Select AIS Crypto CSVs:",
                             size=18,
                             weight=ft.FontWeight.W_500,
                             color=ColorScheme.TEXT_PRIMARY
@@ -123,11 +122,11 @@ class MainView:
                         ft.Container(
                             content=ft.Row([
                                 ft.ElevatedButton(
-                                    "ITR Format (PIC)",
+                                    "Crypto CSVs",
                                     icon=ft.Icons.FOLDER_OPEN,
                                     on_click=lambda _: self.file_picker.pick_files(
-                                        allow_multiple=False,
-                                        allowed_extensions=["xlsx"]
+                                        allow_multiple=True,
+                                        allowed_extensions=["csv"]
                                     ),
                                     bgcolor=ColorScheme.PRIMARY,
                                     color=ft.Colors.WHITE,
