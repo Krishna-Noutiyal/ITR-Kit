@@ -91,7 +91,7 @@ class MainView:
                 # Title
                 ft.Container(
                     content=ft.Text(
-                        "Capital Gain Calculator",
+                        "CGC : Capital Gain Calculator",
                         size=32,
                         weight=ft.FontWeight.BOLD,
                         color=ColorScheme.PRIMARY
@@ -102,7 +102,7 @@ class MainView:
                 # Description
                 ft.Container(
                     content=ft.Text(
-                        "Hello, please select the CG files (csv) downloaded from AIS portal to perform operations.\n",
+                        "Hello, CGC creates beautiful excel dashboard for visualizing Capital Gain Please select the Capital Gain CSVs download from the AIS protal \nGive the Output Path to store the Capital Gain (.xlsx) File",
                         size=16,
                         color=ColorScheme.TEXT_SECONDARY
                     ),
