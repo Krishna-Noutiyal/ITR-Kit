@@ -1,9 +1,9 @@
 flet build windows `
---project "Sola" `
+--project "CryptoAIS" `
 --company "Pooja ITR Center" `
---description "Created by Krish to Automate Form-16 Generation using ITR Format. Created for POOJA ITR CENTER" `
---product "Sola" `
---build-version "1.1" `
+--description "Cryptocurrency Trade calculatore that updated Form-16 for Crypto Calculations" `
+--product "CryptoAIS" `
+--build-version "1.0" `
 --company "Pooja ITR Center" `
 --copyright "Copyright (C) 2025 Pooja ITR Center" `
 --exclude "release, icons, requirements.txt, README.md, certs, test, .venv" `
