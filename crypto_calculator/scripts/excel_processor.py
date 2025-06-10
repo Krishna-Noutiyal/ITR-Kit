@@ -5,10 +5,12 @@ from math import isnan
 import random as r
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+import datetime as dt
 
 
 @dataclass
 class ExcelProcessor:
+
     def _select_workbook(self, file_name: str, sheet_name: str = "FORM-16") -> None:
         """
         Opens an existing Excel workbook for Form-16 using openpyxl and selects the specified worksheet.
@@ -122,12 +124,13 @@ class ExcelProcessor:
             start_color="002060", end_color="002060", fill_type="solid"
         )
         green_fill = PatternFill(
-            start_color="A9D08E", end_color="A9D08E", fill_type="solid"
+            start_color="00B050", end_color="00B050", fill_type="solid"
         )
 
         # Store styles in self.s
         self.s = {
             "blank": {"font": normal_font, "alignment": center_alignment},
+            "blank_bold": {"font": bold_font, "alignment": center_alignment},
             "dark_red": {
                 "font": bold_font,
                 "alignment": center_alignment,
@@ -159,7 +162,7 @@ class ExcelProcessor:
                 "border": thin_border,
             },
             "green": {
-                "font": normal_font,
+                "font": bold_font,
                 "alignment": center_alignment,
                 "fill": green_fill,
                 "border": thin_border,
@@ -235,15 +238,34 @@ class ExcelProcessor:
                 self._apply_style(cell, "blank")
 
     def set(
-        self, cell: openpyxl.cell.Cell, value: str | int | float, style: str
+        self,
+        cell: openpyxl.cell.Cell,
+        value: str | int | float | dt.datetime,
+        style: str,
+        type: str = "general",
     ) -> None:
         """
-        Sets the cell with value and style
+        Sets the cell with value, style, and optionally cell type.
+
+        Args:
+            cell (openpyxl.cell.Cell): The cell to set.
+            value (str | int | float): The value to assign.
+            style (str): The style key to apply.
+            type (str, optional): The type of the cell ('general', 'date', 'text', etc.). Defaults to 'general'.
         """
         cell.value = value
         self._apply_style(cell, style)
 
-    def make_dashboard(self, file_name: str, sheet_name: str = "crypto") -> None:
+        # Set cell number format based on type
+        if type == "date":
+            cell.number_format = "dd/mm/yyyy"
+        elif type == "text":
+            cell.number_format = "@"
+        elif type == "general":
+            cell.number_format = "General"
+        # You can add more types/formats as needed
+
+    def make_dashboard(self, file_name: str, df: pd.DataFrame, sheet_name: str = "crypto") -> None:
         """
         Creates the Dashboard for crypto Calculations
         """
@@ -290,7 +312,6 @@ class ExcelProcessor:
 
         self.ws.merge_cells("H4:J7")
         tcg_value = self.ws["H4"]
-        self.set(tcg_value, r.randint(10000, 100000), "dark_red_h")
 
         """################# Total Cost of Acquisition #################"""
 
@@ -300,7 +321,6 @@ class ExcelProcessor:
 
         self.ws.merge_cells("H9:J10")
         tcoa_value = self.ws["H9"]
-        self.set(tcoa_value, r.randint(10000, 100000), "light_red_h")
 
         """################# Total Consideration Recived #################"""
 
@@ -310,7 +330,101 @@ class ExcelProcessor:
 
         self.ws.merge_cells("H12:J14")
         tcr_value = self.ws["H12"]
-        self.set(tcr_value, r.randint(10000, 100000), "green_h")
+
+        """################# Evaluationg Crypto Data #################"""
+
+        # Rename columns for consistency
+        df = df.rename(
+            columns={
+            "Information Source": "source",
+            "Date of Payment/Credit": "date_of_transfer",
+            "Amount Paid/Credited - Reported by Source": "consideration_received",
+            }
+        )
+
+        """################# Inserting Crypto Data #################"""
+
+        # Inserting Details
+
+        df_values = df.values
+        for i, data in enumerate(df_values):
+
+            print(f"({i}) \t {data[0]} \t {data[1].date()} \t {data[2]}")
+            # Inserting Source Detail
+            src_cell_index = "A"+ str(3+i)
+            self.ws.merge_cells(src_cell_index+ ":"+ "B"+ str(3+i))
+            src_cell = self.ws[src_cell_index]
+            self.set(src_cell,data[0],"blank")
+
+            # Inserting Date of Transfer
+            dot_cell_index = "D" + str(3+i)
+            dot_cell = self.ws[dot_cell_index]
+            self.set(dot_cell,data[1],"blank","date")
+
+            # Inserting Consideration Received
+            cr_cell_index = "F" + str(3+i)
+            cr_cell = self.ws[cr_cell_index]
+            cr_value = data[2]
+            self.set(cr_cell,cr_value,"blank")
+
+            """################# Generating Crypto Details #################"""
+
+            doa_cell = "C"+ str(3+i)
+
+            # Generating Date of Acquisition
+            # Generate a random date between 01-04-2024 and data[1]
+            start_date = dt.datetime(2024, 4, 1)
+            end_date = data[1]
+            if end_date <= start_date:
+                random_date = start_date
+            else:
+                delta = end_date - start_date
+                random_days = r.randint(0, delta.days)
+                random_date = start_date + dt.timedelta(days=random_days)
+
+            doa_cell_obj = self.ws[doa_cell]
+            self.set(doa_cell_obj, random_date, "blank", "date")
+
+            # Generate Cost of Acquisition (coa) - mostly greater than consideration_received (data[2])
+            # 80% chance to be greater, 20% chance to be less or equal
+            if r.random() < 0.8:
+                # Greater: add 5% to 30% random premium
+                increment = r.uniform(0.05, 0.3)
+                coa_value = round(data[2] * (1 + increment), 2)
+            else:
+                # Less or equal: subtract up to 20%
+                decrement = r.uniform(0, 0.2)
+                coa_value = round(data[2] * (1 - decrement), 2)
+
+            coa_cell_index = "E" + str(3 + i)
+            coa_cell = self.ws[coa_cell_index]
+            self.set(coa_cell, int(coa_value), "blank")
+
+            # Calculate Capital Gain (cg): consideration_received - cost_of_acquisition
+            cg_cell_index = "G" + str(3 + i)
+            cg_cell = self.ws[cg_cell_index]
+            cg_cell_formula = "=F" + str(3 +i) +"-E"+ str(3+i) + ""
+
+            if (cr_value- coa_value  <= 0):
+                self.set(cg_cell, cg_cell_formula, "light_red")
+            else:
+                self.set(cg_cell, cg_cell_formula, "green")
+
+        """################# Total Capital Gain #################"""
+        # Calculate the number of data rows
+        num_rows = len(df)
+
+        # Total Capital Gain
+        tcg_formula = "=SUM(G3:G" + str(3 + num_rows -1) + ")"
+        self.set(tcg_value, tcg_formula, "dark_red_h")
+
+        # Total Cost of Acquisition
+        tcoa_formula = "=SUM(E3:E" + str(3 + num_rows -1) + ")"
+        self.set(tcoa_value, tcoa_formula, "light_red_h")
+
+        # Total Consideration Received
+        tcr_formula = "=SUM(F3:F" + str(3 + num_rows -1) + ")"
+        self.set(tcr_value, tcr_formula, "green_h")
 
         self.workbook.close()
         self.workbook.save(file_name)
@@ -320,6 +434,13 @@ if __name__ == "__main__":
     # Create an instance of CSVProcessor
     test = ExcelProcessor()
 
-    test.make_dashboard(
-        file_name="test/Form-16 .xlsx",
-    )
+    from csv_processor import CSVProcessor
+    import glob
+    import os
+
+    test_folder = "test/cryptodata"
+    file_list = glob.glob(os.path.join(test_folder, "*.csv"))
+    print("Files found:", file_list)
+    df = CSVProcessor().combine_csvs(file_list)
+
+    test.make_dashboard("test/cryptodata/Form-16 .xlsx", df)
