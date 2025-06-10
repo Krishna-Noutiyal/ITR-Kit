@@ -1,8 +1,8 @@
-# Form-16 Generator
+# Sola
 
 ## Overview
 
-Form-16 Generator is a software tool designed to automate the generation of Form-16 documents using ITR format Excel files. It simplifies the process of extracting relevant details and creating professional Form-16 documents.
+Sola is a software tool designed to automate the generation of Form-16 documents using ITR format Excel files. It simplifies the process of extracting relevant details and creating professional Form-16 documents.
 
 ## Features
 

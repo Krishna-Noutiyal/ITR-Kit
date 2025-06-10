@@ -7,10 +7,10 @@ class Router:
         self.setup_page()
     
     def setup_page(self):
-        self.page.title = "Form 16 Generator"
+        self.page.title = "Sola V1.2"
         self.page.theme_mode = ft.ThemeMode.DARK
         self.page.auto_scroll = True
-        self.page.window.width = 1200
+        # self.page.window.width = 1200
         self.page.window.height = 800
         # self.page.padding = 20
         # self.page.expand = True

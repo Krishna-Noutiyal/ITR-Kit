@@ -94,7 +94,7 @@ class MainView:
                 # Title
                 ft.Container(
                     content=ft.Text(
-                        "Sola : Form-16 Generator",
+                        "Form 16 Generator",
                         size=32,
                         weight=ft.FontWeight.BOLD,
                         color=ColorScheme.PRIMARY
