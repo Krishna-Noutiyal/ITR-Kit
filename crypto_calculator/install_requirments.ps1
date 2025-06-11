@@ -1,25 +1,43 @@
-# Ensure pip and Mercurial are installed
-Write-Host "Installing Mercurial..."
+# ANSI escape characters for colored output
+$esc = [char]27
+function Info($msg) { Write-Host "$esc[1;34m[INFO]$esc[0m $msg" }
+function Success($msg) { Write-Host "$esc[1;32m[SUCCESS]$esc[0m $msg" }
+function ErrorMsg($msg) { Write-Host "$esc[1;31m[ERROR]$esc[0m $msg" }
+
+# === Setup ===
+$branch = "3.1"
+$openpyxlDir = "openpyxl"
+
+# Step 1: Ensure pip & Mercurial are available
+Info "Ensuring pip and Mercurial are installed..."
 pip install --upgrade pip
 pip install mercurial
 
-# Clone openpyxl 3.2 branch from Heptapod
-Write-Host "Cloning openpyxl 3.2 branch..."
-if (Test-Path ".\openpyxl") {
-    Remove-Item -Recurse -Force ".\openpyxl"
+# Step 2: Clone openpyxl 3.1 branch
+if (Test-Path $openpyxlDir) {
+    Info "Removing previous openpyxl clone..."
+    Remove-Item -Recurse -Force $openpyxlDir
 }
-hg clone https://foss.heptapod.net/openpyxl/openpyxl -b 3.2
 
-# Install openpyxl from the local cloned repo
-Write-Host "Installing openpyxl 3.2 from local source..."
-cd .\openpyxl
+Info "Cloning openpyxl 3.1 branch..."
+hg clone -b $branch https://foss.heptapod.net/openpyxl/openpyxl $openpyxlDir
+
+# Step 3: Install openpyxl from local source
+Set-Location $openpyxlDir
+Info "Installing openpyxl from 3.1 branch source..."
 pip install .
-cd ..
 
-Remove-Item -Recurse -Force ".\openpyxl"
+# Return to project root
+Set-Location ..
 
-# Create temporary requirements.txt
-Write-Host "Installing remaining project packages..."
+# Step 4: Clean up
+Info "Cleaning up cloned repository..."
+Remove-Item -Recurse -Force $openpyxlDir
+
+Success "OpenPyXL from 3.1 branch installed successfully."
+# Step 6: Install other dependencies
+Info "Installing additional project dependencies..."
+
 $requirements = @'
 anyio==4.9.0
 arrow==1.3.0
@@ -69,8 +87,6 @@ watchdog==4.0.2
 
 $requirements | Out-File -Encoding UTF8 -FilePath "requirements.txt"
 pip install -r requirements.txt
-
-# Clean up
 Remove-Item "requirements.txt"
 
-Write-Host "`n✅ All packages installed successfully, including openpyxl 3.2."
+Success "All packages (including openpyxl from topic branch) installed successfully."
