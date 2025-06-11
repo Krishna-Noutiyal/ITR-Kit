@@ -18,7 +18,7 @@ function Write-Section($msg) {
 # Step 1: Install Requirements
 Write-Section "Installing Python Packages"
 try {
-    .\install_req.ps1
+    .\install_requirments.ps1
     if ($LASTEXITCODE -ne 0) {
         Write-ErrorMsg "Dependency installation failed. Exiting."
         exit 1
@@ -29,6 +29,8 @@ try {
     Write-ErrorMsg "Exception during requirements installation: $_"
     exit 1
 }
+
+clear
 
 # Step 2: Build the Flet App
 Write-Section "Building Flet Windows Application"
