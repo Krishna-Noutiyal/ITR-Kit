@@ -6,7 +6,7 @@ function ErrorMsg($msg) { Write-Host "$esc[1;31m[ERROR]$esc[0m $msg" }
 
 # === Setup ===
 $branch = "3.2"
-$openpyxlDir = "openpyxl"
+$openpyxlDir = "test\openpyxl"
 
 # Step 1: Ensure pip & Mercurial are available
 Info "Ensuring pip and Mercurial are installed..."
@@ -28,7 +28,7 @@ Info "Installing openpyxl from 3.2 branch source..."
 pip install .
 
 # Return to project root
-Set-Location ..
+Set-Location ../..
 
 # Step 4: Clean up
 Info "Cleaning up cloned repository..."
