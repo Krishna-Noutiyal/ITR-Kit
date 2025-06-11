@@ -14,46 +14,60 @@ function Write-Section($msg) {
     Write-Host ""
     Write-Host "$esc[1;36m======== $msg ========`n$esc[0m"
 }
-
-# Step 1: Install Requirements
-Write-Section "Installing Python Packages"
-try {
-    .\install_requirments.ps1
-    if ($LASTEXITCODE -ne 0) {
-        Write-ErrorMsg "Dependency installation failed. Exiting."
-        exit 1
-    } else {
-        Write-Success "All Python packages installed successfully."
+# Parse arguments for -i or --install-req
+$installReq = $false
+foreach ($arg in $args) {
+    if ($arg -eq "-i" -or $arg -eq "--install-req") {
+        $installReq = $true
+        break
     }
-} catch {
-    Write-ErrorMsg "Exception during requirements installation: $_"
-    exit 1
 }
 
-clear
+# Step 1: Install Requirements (only if flag is set)
+if ($installReq) {
+    Write-Section "Installing Python Packages"
+    try {
+        .\install_requirments.ps1
+        if ($LASTEXITCODE -ne 0) {
+            Write-ErrorMsg "Dependency installation failed. Exiting."
+            exit 1
+        }
+        else {
+            Write-Success "All Python packages installed successfully."
+        }
+    }
+    catch {
+        Write-ErrorMsg "Exception during requirements installation: $_"
+        exit 1
+    }
+}
+
+Clear-Host
 
 # Step 2: Build the Flet App
 Write-Section "Building Flet Windows Application"
 
 try {
     flet build windows `
-    --project "CryptoAIS" `
-    --company "Pooja ITR Center" `
-    --description "Cryptocurrency Trade calculatore that updated Form-16 for Crypto Calculations" `
-    --product "CryptoAIS" `
-    --build-version "1.1.0" `
-    --company "Pooja ITR Center" `
-    --copyright "Copyright (C) 2025 Pooja ITR Center" `
-    --exclude "release, icons, requirements.txt, README.md, certs, test, .venv" `
-    --clear-cache --compile-app --cleanup-app --cleanup-packages --skip-flutter-doctor --module-name .\main.py
+        --project "CryptoAIS" `
+        --company "Pooja ITR Center" `
+        --description "Cryptocurrency Trade calculatore that updated Form-16 for Crypto Calculations" `
+        --product "CryptoAIS" `
+        --build-version "1.2.0" `
+        --company "Pooja ITR Center" `
+        --copyright "Copyright (C) 2025 Pooja ITR Center" `
+        --exclude "release, icons, requirements.txt, README.md, certs, test, .venv" `
+        --clear-cache --compile-app --compile-packages --cleanup-app --module-name .\main.py
 
     if ($LASTEXITCODE -eq 0) {
         Write-Success "Flet Windows build completed successfully!"
-    } else {
+    }
+    else {
         Write-ErrorMsg "Flet build failed. Exit code: $LASTEXITCODE"
         exit 1
     }
-} catch {
+}
+catch {
     Write-ErrorMsg "Exception during Flet build: $_"
     exit 1
 }
