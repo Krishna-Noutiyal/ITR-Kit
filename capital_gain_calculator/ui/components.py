@@ -17,11 +17,11 @@ class MainView:
         self.page.overlay.extend([self.file_picker, self.output_picker])
 
         self.selected_files_text = ft.Text(
-            "No files selected", color=ColorScheme.TEXT_SECONDARY, size=14
+            "No CSVs Selected", color=ColorScheme.TEXT_SECONDARY, size=14
         )
 
         self.output_path_text = ft.Text(
-            "No output path selected", color=ColorScheme.TEXT_SECONDARY, size=14
+            "No Output Path Selected", color=ColorScheme.TEXT_SECONDARY, size=14
         )
 
         self.status_text = ft.Text("", color=ColorScheme.TEXT_SECONDARY, size=14)
@@ -31,12 +31,12 @@ class MainView:
             self.selected_files = [file.path for file in e.files]
             file_names = [os.path.basename(path) for path in self.selected_files]
             self.selected_files_text.value = (
-                f"Selected {len(self.selected_files)} files: {', '.join(file_names)}"
+                f"Selected {len(self.selected_files)} Files: {', '.join(file_names)}"
             )
             self.selected_files_text.color = ColorScheme.SUCCESS
         else:
             self.selected_files = []
-            self.selected_files_text.value = "No files selected"
+            self.selected_files_text.value = "No CSVs Selected"
             self.selected_files_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
@@ -49,17 +49,17 @@ class MainView:
             self.output_path_text.color = ColorScheme.SUCCESS
         else:
             self.output_path = ""
-            self.output_path_text.value = "No output path selected"
+            self.output_path_text.value = "No Output Path Selected"
             self.output_path_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select CSV files !", ColorScheme.ERROR)
+            self.show_status("Please Select CSVs !", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select output path !", ColorScheme.ERROR)
+            self.show_status("Please Select Output Path !", ColorScheme.ERROR)
             return
 
         try:
@@ -72,7 +72,7 @@ class MainView:
 
             if create_Excel:
                 self.show_status(
-                    "Excel file Created Successfully !", ColorScheme.SUCCESS
+                    "Excel File Created Successfully !", ColorScheme.SUCCESS
                 )
             else:
                 self.show_status("Error Processing Files !", ColorScheme.ERROR)
@@ -80,7 +80,7 @@ class MainView:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
 
     def show_status(self, message: str, color: str):
-        self.status_text.value = message.title()
+        self.status_text.value = message
         self.status_text.color = color
         self.status_text.weight = ft.FontWeight.BOLD
 
