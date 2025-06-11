@@ -1,6 +1,6 @@
 [project]
 name = "Sola"
-version = "1.2"
+version = "1.3"
 description = "Created by Krish to Automate Form-16 Generation using ITR Format. Created for POOJA ITR CENTER"
 readme = "README.md"
 requires-python = ">=3.9"
