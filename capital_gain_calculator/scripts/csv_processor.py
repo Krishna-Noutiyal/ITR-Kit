@@ -49,8 +49,8 @@ class CSVProcessor:
                 df['Sales Consideration - Reported by Source'] = pd.to_numeric(df['Sales Consideration - Reported by Source'].replace({r',': ''}, regex=True), errors='coerce')
 
                 # Add source file column to track origin
-                df['source_file'] = os.path.basename(file_path)
-                df['Cost - Sell'] = df['Sales Consideration - Reported by Source'] - df['Cost of Acquisition']
+                df['Data From'] = os.path.basename(file_path)
+                df['Sell - Cost'] = df['Sales Consideration - Reported by Source'] - df['Cost of Acquisition']
                 
                 # Convert the 'Date of Sale/Transfer' column to datetime if not already
                 df['Date of Sale/Transfer'] = pd.to_datetime(df['Date of Sale/Transfer'],format="%d-%b-%Y", errors='coerce', dayfirst=True)

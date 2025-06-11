@@ -101,7 +101,7 @@ class MainView:
                     # Description
                     ft.Container(
                         content=ft.Text(
-                            "Hello, CGC creates beautiful excel dashboard for visualizing Capital Gain Please select the Capital Gain CSVs download from the AIS protal \nGive the Output Path to store the Capital Gain (.xlsx) File",
+                            "Hello, CGC creates beautiful excel dashboard for visualizing Capital Gain Please select the Capital Gain CSVs download from the AIS portal \nGive the Output Path to store the Capital Gain (.xlsx) File",
                             size=16,
                             color=ColorScheme.TEXT_SECONDARY,
                         ),
