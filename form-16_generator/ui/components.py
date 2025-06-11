@@ -58,11 +58,11 @@ class MainView:
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select ITR Format first!", ColorScheme.ERROR)
+            self.show_status("Please select ITR Format !", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select output path first!", ColorScheme.ERROR)
+            self.show_status("Please select Form-16 of User !", ColorScheme.ERROR)
             return
 
         try:
@@ -75,15 +75,16 @@ class MainView:
             )
 
             if create_Excel:
-                self.show_status("Form-16 Generated successfully!", ColorScheme.SUCCESS)
+                self.show_status("Form-16 Filled Successfully !", ColorScheme.SUCCESS)
             else:
-                self.show_status("Error processing file!", ColorScheme.ERROR)
+                self.show_status("Error Processing File !", ColorScheme.ERROR)
         except Exception as ex:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
 
     def show_status(self, message: str, color: str):
-        self.status_text.value = message
+        self.status_text.value = message.title()
         self.status_text.color = color
+        self.status_text.weight = ft.FontWeight.BOLD
         self.page.update()
 
     def build(self):
@@ -105,7 +106,7 @@ class MainView:
                 # Description
                 ft.Container(
                     content=ft.Text(
-                        "Hello, please select the ITR formate that you created and the desired Form-16 (xlsx) file to generate.\n",
+                        "Hello, Sola is a Form-16 Filler, Use the ITR format of user to fill the desired Form-16 (xlsx) file of the respective user.\n",
                         size=16,
                         color=ColorScheme.TEXT_SECONDARY
                     ),
