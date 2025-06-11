@@ -1,7 +1,7 @@
 [project]
 name = "CGC"
 version = "1.1"
-description = "Created by Krish to Automate Crypto Calculation of AIS Crypto Data"
+description = "Capital Gain Analyzer that creates beautiful Excel Sheet for Visualizing Capital Gain"
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
