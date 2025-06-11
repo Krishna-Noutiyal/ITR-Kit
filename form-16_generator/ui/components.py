@@ -16,13 +16,13 @@ class MainView:
         self.page.overlay.extend([self.file_picker, self.output_picker])
 
         self.selected_file_text = ft.Text(
-            "No file selected",
+            "No File Selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
 
         self.output_path_text = ft.Text(
-            "No output path selected",
+            "No Form-16 Selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
@@ -37,36 +37,36 @@ class MainView:
         if e.files:
             self.selected_files = [file.path for file in e.files]
             file_names = [os.path.basename(path) for path in self.selected_files]
-            self.selected_file_text.value = f"Selected {len(self.selected_files)} file: {', '.join(file_names)}"
+            self.selected_file_text.value = f"ITR Format: {', '.join(file_names)}"
             self.selected_file_text.color = ColorScheme.SUCCESS
         else:
             self.selected_files = []
-            self.selected_file_text.value = "No file selected"
+            self.selected_file_text.value = "No File Selected"
             self.selected_file_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
     def on_output_selected(self, e: ft.FilePickerResultEvent):
         if e.path:
             self.output_path = e.path
-            self.output_path_text.value = f"Output: {os.path.basename(self.output_path)}"
+            self.output_path_text.value = f"Form-16: {os.path.basename(self.output_path)}"
             self.output_path_text.color = ColorScheme.SUCCESS
         else:
             self.output_path = ""
-            self.output_path_text.value = "No output path selected"
+            self.output_path_text.value = "No Form-16 Selected"
             self.output_path_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select ITR Format !", ColorScheme.ERROR)
+            self.show_status("Please Select ITR Format !", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select Form-16 of User !", ColorScheme.ERROR)
+            self.show_status("Please Select Form-16 !", ColorScheme.ERROR)
             return
 
         try:
-            self.show_status("Processing file...", ColorScheme.PRIMARY)
+            self.show_status("Processing File...", ColorScheme.PRIMARY)
 
             # Call the ExcelProcessor to create Form-16
             create_Excel = self.excel_processor.create_form_16(
@@ -82,7 +82,7 @@ class MainView:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
 
     def show_status(self, message: str, color: str):
-        self.status_text.value = message.title()
+        self.status_text.value = message
         self.status_text.color = color
         self.status_text.weight = ft.FontWeight.BOLD
         self.page.update()
