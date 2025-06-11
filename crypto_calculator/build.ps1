@@ -1,6 +1,6 @@
 # Enable ANSI escape codes in PowerShell
 $esc = [char]27
-
+$version = "1.2.0"
 function Write-Info($msg) {
     Write-Host "$esc[1;34m[INFO]$esc[0m $msg"
 }
@@ -14,20 +14,50 @@ function Write-Section($msg) {
     Write-Host ""
     Write-Host "$esc[1;36m======== $msg ========`n$esc[0m"
 }
-# Parse arguments for -i or --install-req
+function Show-Help {
+    Write-Host @"
+$esc[1;36m
+CryptoAIS Build Script
+=============================
+
+USAGE:
+    build.ps1 [-i|--install-req] [-h|--help]
+
+OPTIONS:
+    -i, --install-req   Install Python requirements before building. (requirements.txt needed)
+    -h, --help          Show this help message and exit.
+
+DESCRIPTION:
+    Builds the CryptoAIS Flet Windows application.
+    Optionally installs Python dependencies from requirements.txt.
+
+EXAMPLES:
+    .\build.ps1 -i
+    .\build.ps1 --help
+
+$esc[0m
+"@
+}
+
 $installReq = $false
 foreach ($arg in $args) {
     if ($arg -eq "-i" -or $arg -eq "--install-req") {
         $installReq = $true
         break
     }
+    if ($arg -eq "-h" -or $arg -eq "--help") {
+        Show-help
+        exit 0
+    }
+
+
 }
 
 # Step 1: Install Requirements (only if flag is set)
 if ($installReq) {
     Write-Section "Installing Python Packages"
     try {
-        .\install_requirments.ps1
+        pip install .\requirements.txt
         if ($LASTEXITCODE -ne 0) {
             Write-ErrorMsg "Dependency installation failed. Exiting."
             exit 1
@@ -53,11 +83,11 @@ try {
         --company "Pooja ITR Center" `
         --description "Cryptocurrency Trade calculatore that updated Form-16 for Crypto Calculations" `
         --product "CryptoAIS" `
-        --build-version "1.2.0" `
+        --build-version $version `
         --company "Pooja ITR Center" `
         --copyright "Copyright (C) 2025 Pooja ITR Center" `
         --exclude "release, icons, requirements.txt, README.md, certs, test, .venv" `
-        --clear-cache --compile-app --compile-packages --cleanup-app --module-name .\main.py
+        --clear-cache --compile-app --compile-packages --cleanup-app --cleanup-packages --cleanup-app --module-name .\main.py
 
     if ($LASTEXITCODE -eq 0) {
         Write-Success "Flet Windows build completed successfully!"
