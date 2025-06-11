@@ -56,9 +56,10 @@ class ExcelProcessor:
         try:
             self.ws = workbook[sheet_name]
             del workbook[sheet_name]
-            raise FileExistsError("The Sheet Was Deleted Successfully !")
+            self.ws = self.workbook.create_sheet(sheet_name, 0)
+            # raise FileExistsError("The Sheet Was Deleted Successfully !")
             # Sheet exists, use it
-        except FileExistsError:
+        except:
             # Sheet doesn't exist
             self.ws = self.workbook.create_sheet(sheet_name, 0)
 
@@ -430,7 +431,7 @@ class ExcelProcessor:
 
         self.workbook.close()
         self.workbook.save(form_16)
-        
+
         return True
 
 
