@@ -55,15 +55,15 @@ class MainView:
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select CSV files first!", ColorScheme.ERROR)
+            self.show_status("Please select CSV files !", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select output path first!", ColorScheme.ERROR)
+            self.show_status("Please select output path !", ColorScheme.ERROR)
             return
 
         try:
-            self.show_status("Processing files...", ColorScheme.PRIMARY)
+            self.show_status("Processing Files...", ColorScheme.PRIMARY)
 
             # Combine CSV files into a single DataFrame
             dataframe = self.csv_processor.combine_csvs(self.selected_files)
@@ -72,16 +72,18 @@ class MainView:
 
             if create_Excel:
                 self.show_status(
-                    "Excel file created successfully!", ColorScheme.SUCCESS
+                    "Excel file Created Successfully !", ColorScheme.SUCCESS
                 )
             else:
-                self.show_status("Error processing files!", ColorScheme.ERROR)
+                self.show_status("Error Processing Files !", ColorScheme.ERROR)
         except Exception as ex:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
 
     def show_status(self, message: str, color: str):
-        self.status_text.value = message
+        self.status_text.value = message.title()
         self.status_text.color = color
+        self.status_text.weight = ft.FontWeight.BOLD
+
         self.page.update()
 
     def build(self):
