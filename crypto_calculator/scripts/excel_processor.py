@@ -55,9 +55,10 @@ class ExcelProcessor:
         """
         try:
             self.ws = workbook[sheet_name]
-            workbook.active = workbook[sheet_name]
+            del workbook[sheet_name]
+            raise FileExistsError("The Sheet Was Deleted Successfully !")
             # Sheet exists, use it
-        except KeyError:
+        except FileExistsError:
             # Sheet doesn't exist
             self.ws = self.workbook.create_sheet(sheet_name, 0)
 

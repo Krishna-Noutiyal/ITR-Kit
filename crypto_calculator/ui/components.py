@@ -17,13 +17,11 @@ class MainView:
         self.page.overlay.extend([self.file_picker, self.output_picker])
 
         self.selected_file_text = ft.Text(
-            "No file selected",
-            color=ColorScheme.TEXT_SECONDARY,
-            size=14
+            "No CSVs Selected", color=ColorScheme.TEXT_SECONDARY, size=14
         )
 
         self.output_path_text = ft.Text(
-            "No Form-16 selected",
+            "No Form-16 Selected",
             color=ColorScheme.TEXT_SECONDARY,
             size=14
         )
@@ -38,11 +36,11 @@ class MainView:
         if e.files:
             self.selected_files = [file.path for file in e.files]
             file_names = [os.path.basename(path) for path in self.selected_files]
-            self.selected_file_text.value = f"Selected {len(self.selected_files)} files: {', '.join(file_names)}"
+            self.selected_file_text.value = f"Selected {len(self.selected_files)} Files: {', '.join(file_names)}"
             self.selected_file_text.color = ColorScheme.SUCCESS
         else:
             self.selected_files = []
-            self.selected_file_text.value = "No files selected"
+            self.selected_file_text.value = "No CSVs Selected"
             self.selected_file_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
@@ -53,36 +51,37 @@ class MainView:
             self.output_path_text.color = ColorScheme.SUCCESS
         else:
             self.output_path = ""
-            self.output_path_text.value = "No output path selected"
+            self.output_path_text.value = "Form-16 Not Selected"
             self.output_path_text.color = ColorScheme.TEXT_SECONDARY
         self.page.update()
 
     def on_submit_clicked(self, e):
         if not self.selected_files:
-            self.show_status("Please select AIS Crypto CSVs First!", ColorScheme.ERROR)
+            self.show_status("Please Select Crypto Trade CSVs !", ColorScheme.ERROR)
             return
 
         if not self.output_path:
-            self.show_status("Please select form-16 First!", ColorScheme.ERROR)
+            self.show_status("Please Select Form-16 !", ColorScheme.ERROR)
             return
 
         try:
-            self.show_status("Processing files...", ColorScheme.PRIMARY)
+            self.show_status("Processing Files...", ColorScheme.PRIMARY)
 
             crypto_data = self.csv_processor.combine_csvs(self.selected_files)
             # Call the ExcelProcessor to create Form-16
             create_Excel = self.excel_processor.make_dashboard(self.output_path,crypto_data)
 
             if create_Excel:
-                self.show_status("Form-16 Generated successfully!", ColorScheme.SUCCESS)
+                self.show_status("Crypto Trades Added To Form-16 Successfully !", ColorScheme.SUCCESS)
             else:
-                self.show_status("Error processing file!", ColorScheme.ERROR)
+                self.show_status("Error Processing File !", ColorScheme.ERROR)
         except Exception as ex:
             self.show_status(f"Error: {str(ex)}", ColorScheme.ERROR)
 
     def show_status(self, message: str, color: str):
         self.status_text.value = message
         self.status_text.color = color
+        self.status_text.weight = ft.FontWeight.BOLD
         self.page.update()
 
     def build(self):
@@ -104,7 +103,7 @@ class MainView:
                     # Description
                     ft.Container(
                         content=ft.Text(
-                            "Hello, please select the AIS Crypto CSVs that you downladed from the AIS portal \nand the desired Form-16 (xlsx) file to generate Crypto Calculations.\n",
+                            "Hello, CryptoAIS is a Crypto Trade Analyzer that update the Form-16 of users to include crypto trading details. \nSelect the AIS Crypto CSVs that you downladed from the AIS portal and the desired Form-16 (xlsx) of user.\n",
                             size=16,
                             color=ColorScheme.TEXT_SECONDARY,
                         ),
