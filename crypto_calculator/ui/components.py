@@ -68,7 +68,7 @@ class MainView:
 
         try:
             self.show_status("Processing files...", ColorScheme.PRIMARY)
-            
+
             crypto_data = self.csv_processor.combine_csvs(self.selected_files)
             # Call the ExcelProcessor to create Form-16
             create_Excel = self.excel_processor.make_dashboard(self.output_path,crypto_data)
@@ -89,130 +89,143 @@ class MainView:
         return ft.Container(
             # width= self.page.width,
             # height= self.page.height,
-            content=ft.Column([
-                # Title
-                ft.Container(
-                    content=ft.Text(
-                        "CryptoAIS : Crypto Calculator",
-                        size=32,
-                        weight=ft.FontWeight.BOLD,
-                        color=ColorScheme.PRIMARY
+            content=ft.Column(
+                [
+                    # Title
+                    ft.Container(
+                        content=ft.Text(
+                            "CryptoAIS : Crypto Calculator",
+                            size=32,
+                            weight=ft.FontWeight.BOLD,
+                            color=ColorScheme.PRIMARY,
+                        ),
+                        margin=ft.margin.only(bottom=10),
                     ),
-                    margin=ft.margin.only(bottom=10)
-                ),
-                
-                # Description
-                ft.Container(
-                    content=ft.Text(
-                        "Hello, please select the AIS Crypto CSVs that you downladed from the AIS portal \nand the desired Form-16 (xlsx) file to generate Crypto Calculations.\n",
-                        size=16,
-                        color=ColorScheme.TEXT_SECONDARY
+                    # Description
+                    ft.Container(
+                        content=ft.Text(
+                            "Hello, please select the AIS Crypto CSVs that you downladed from the AIS portal \nand the desired Form-16 (xlsx) file to generate Crypto Calculations.\n",
+                            size=16,
+                            color=ColorScheme.TEXT_SECONDARY,
+                        ),
+                        margin=ft.margin.only(bottom=30),
                     ),
-                    margin=ft.margin.only(bottom=30)
-                ),
-                # File Selection Section
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text(
-                            "Select AIS Crypto CSVs:",
-                            size=18,
-                            weight=ft.FontWeight.W_500,
-                            color=ColorScheme.TEXT_PRIMARY
-                        ),
-                        ft.Container(
-                            content=ft.Row([
-                                ft.ElevatedButton(
-                                    "Crypto CSVs",
-                                    icon=ft.Icons.FOLDER_OPEN,
-                                    on_click=lambda _: self.file_picker.pick_files(
-                                        allow_multiple=True,
-                                        allowed_extensions=["csv"]
-                                    ),
-                                    bgcolor=ColorScheme.PRIMARY,
-                                    color=ft.Colors.WHITE,
-                                    width=200,
-                                    height=50,
-                                    style=ft.ButtonStyle(
-                                        text_style=ft.TextStyle(size=16,weight=ft.FontWeight.BOLD)  # Increased text size
-                                        
-                                    ),
-                                )
-                            ]),
-                            margin=ft.margin.only(top=5, bottom=10)
-                        ),
-                        self.selected_file_text
-                    ]),
-                    padding=20,
-                    border=ft.border.all(1, ColorScheme.BORDER),
-                    border_radius=8,
-                    bgcolor=ColorScheme.SURFACE,
-                    margin=ft.margin.only(bottom=20)
-                ),
-                
-                # Select Form-15 Selection Section
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text(
-                            "Select Form-16:",
-                            size=18,
-                            weight=ft.FontWeight.W_500,
-                            color=ColorScheme.TEXT_PRIMARY
-                        ),
-                        ft.Container(
-                            content=ft.Row([
-                                ft.ElevatedButton(
-                                    "Form-16",
-                                    icon=ft.Icons.SAVE,
-                                    on_click=lambda _: self.output_picker.save_file(
-                                        file_name="Form-16.xlsx",
-                                        allowed_extensions=["xlsx"]
-                                    ),
-                                    bgcolor=ColorScheme.SECONDARY,
+                    # File Selection Section
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(
+                                    "Select AIS Crypto CSVs:",
+                                    size=18,
+                                    weight=ft.FontWeight.W_500,
                                     color=ColorScheme.TEXT_PRIMARY,
-                                    width=200,
-                                    height=50,
-                                    style=ft.ButtonStyle(
-                                        text_style=ft.TextStyle(size=16,weight=ft.FontWeight.BOLD)  # Increased text size
-                                        
+                                ),
+                                ft.Container(
+                                    content=ft.Row(
+                                        [
+                                            ft.ElevatedButton(
+                                                "Crypto CSVs",
+                                                icon=ft.Icons.FOLDER_OPEN,
+                                                on_click=lambda _: self.file_picker.pick_files(
+                                                    allow_multiple=True,
+                                                    allowed_extensions=["csv"],
+                                                ),
+                                                bgcolor=ColorScheme.PRIMARY,
+                                                color=ft.Colors.WHITE,
+                                                width=200,
+                                                height=50,
+                                                style=ft.ButtonStyle(
+                                                    text_style=ft.TextStyle(
+                                                        size=16,
+                                                        weight=ft.FontWeight.BOLD,
+                                                    )  # Increased text size
+                                                ),
+                                            )
+                                        ]
                                     ),
-                                )
-                            ]),
-                            margin=ft.margin.only(top=5, bottom=10)
+                                    margin=ft.margin.only(top=5, bottom=10),
+                                ),
+                                self.selected_file_text,
+                            ]
                         ),
-                        self.output_path_text
-                    ]),
-                    padding=20,
-                    border=ft.border.all(1, ColorScheme.BORDER),
-                    border_radius=8,
-                    bgcolor=ColorScheme.SURFACE,
-                    margin=ft.margin.only(bottom=30)
-                ),
-                
-                # Submit Button
-                ft.Container(
-                    content=ft.ElevatedButton(
-                        "Submit",
-                        icon=ft.Icons.PLAY_ARROW,
-                        on_click=self.on_submit_clicked,
-                        bgcolor=ColorScheme.SUCCESS,
-                        color=ft.Colors.WHITE,
-                        width=200,
-                        height=50,
-                        style=ft.ButtonStyle(
-                            text_style=ft.TextStyle(size=16, weight=ft.FontWeight.BOLD)  # Increased text size
-                        )
+                        padding=20,
+                        border=ft.border.all(1, ColorScheme.BORDER),
+                        border_radius=8,
+                        bgcolor=ColorScheme.SURFACE,
+                        margin=ft.margin.only(bottom=20),
                     ),
-                    alignment=ft.alignment.center,
-                    margin=ft.margin.only(bottom=10)
-                ),
-                
-                # Status Text
-                ft.Container(
-                    content=self.status_text,
-                    alignment=ft.alignment.center,
-                )
-            ]),
+                    # Select Form-15 Selection Section
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(
+                                    "Select Form-16:",
+                                    size=18,
+                                    weight=ft.FontWeight.W_500,
+                                    color=ColorScheme.TEXT_PRIMARY,
+                                ),
+                                ft.Container(
+                                    content=ft.Row(
+                                        [
+                                            ft.ElevatedButton(
+                                                "Form-16",
+                                                icon=ft.Icons.SAVE,
+                                                on_click=lambda _: self.output_picker.save_file(
+                                                    file_name="Form-16.xlsx",
+                                                    allowed_extensions=["xlsx"],
+                                                ),
+                                                bgcolor=ColorScheme.SECONDARY,
+                                                color=ColorScheme.TEXT_PRIMARY,
+                                                width=200,
+                                                height=50,
+                                                style=ft.ButtonStyle(
+                                                    text_style=ft.TextStyle(
+                                                        size=16,
+                                                        weight=ft.FontWeight.BOLD,
+                                                    )  # Increased text size
+                                                ),
+                                            )
+                                        ]
+                                    ),
+                                    margin=ft.margin.only(top=5, bottom=10),
+                                ),
+                                self.output_path_text,
+                            ]
+                        ),
+                        padding=20,
+                        border=ft.border.all(1, ColorScheme.BORDER),
+                        border_radius=8,
+                        bgcolor=ColorScheme.SURFACE,
+                        margin=ft.margin.only(bottom=30),
+                    ),
+                    # Submit Button
+                    ft.Container(
+                        content=ft.ElevatedButton(
+                            "Submit",
+                            icon=ft.Icons.PLAY_ARROW,
+                            on_click=self.on_submit_clicked,
+                            bgcolor=ColorScheme.SUCCESS,
+                            color=ft.Colors.WHITE,
+                            width=200,
+                            height=50,
+                            style=ft.ButtonStyle(
+                                text_style=ft.TextStyle(
+                                    size=16, weight=ft.FontWeight.BOLD
+                                )  # Increased text size
+                            ),
+                        ),
+                        alignment=ft.alignment.center,
+                        margin=ft.margin.only(bottom=10),
+                    ),
+                    # Status Text
+                    ft.Container(
+                        content=self.status_text,
+                        alignment=ft.alignment.center,
+                    ),
+                ]
+            ),
             bgcolor=ColorScheme.BACKGROUND,
             padding=50,
-            expand=True
+            expand=True,
+            border_radius=15,
         )

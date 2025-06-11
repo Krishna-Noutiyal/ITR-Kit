@@ -215,5 +215,6 @@ class MainView:
             ]),
             bgcolor=ColorScheme.BACKGROUND,
             padding=50,
-            expand=True
+            expand=True,
+            border_radius=15
         )
