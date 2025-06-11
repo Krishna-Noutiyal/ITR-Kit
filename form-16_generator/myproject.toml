@@ -15,7 +15,3 @@ dependencies = [
 product = "Sola"
 company = "Pooja ITR Center"
 copyright = "Copyright (C) 2025 Pooja ITR Center"
-
-[tool.flet.app]
-path = "src"
-icon = "icons/icon_V2.ico"
