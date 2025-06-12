@@ -74,6 +74,7 @@ The structure of the project is as follows :
 - Flet
 - OpenPyXL
 - Pandas
+- Toml
 
 ## Sponsers and Funding 💰
 The project is sponsered by **Pooja ITR Center**. All of the funding is provided by **Pooja ITR Center** with exclusive rights to the software.
