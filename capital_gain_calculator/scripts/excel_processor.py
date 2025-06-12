@@ -243,12 +243,16 @@ class ExcelProcessor:
             # Short Term Before 23rd July 2024 Values
             ws.write_number(2, 1, fvc_sort_Before_23, formats["blank"])
             ws.write_number(2, 2, coa_short_Before_23, formats["blank"])
-            ws.write_formula(2, 3, "=ROUND((B3-C3)*15%,0)", formats["blank"])
+            ws.write_formula(
+                2, 3, "=IF(B3-C3>=0,ROUND((B3-C3)*15%,0),0)", formats["blank"]
+            )
 
             # Short Term After 23rd July 2024 Values
             ws.write_number(3, 1, fvc_sort_After_23, formats["blank"])
             ws.write_number(3, 2, coa_short_After_23, formats["blank"])
-            ws.write_formula(3, 3, "=ROUND((B4-C4)*20%,0)", formats["blank"])
+            ws.write_formula(
+                3, 3, "=IF(B4-C4>=0,ROUND((B4-C4)*20%,0),0)", formats["blank"]
+            )
 
             # Short Term Grand Total Values
             ws.write_formula(4, 1, "=SUM(B3:B4)", formats["green_h"])
@@ -273,7 +277,12 @@ class ExcelProcessor:
             # long Term After 23rd July 2024 Values
             ws.write_number(8, 1, fvc_long_After_23, formats["blank"])
             ws.write_number(8, 2, coa_long_After_23, formats["blank"])
-            ws.write_formula(8, 3, "=ROUND((B9-C9)*12.5%,0)", formats["blank"])
+            ws.write_formula(
+                8,
+                3,
+                "=IF(B9-C9>125000,ROUND(((B9-C9)-125000)*12.5%,0),0)",
+                formats["blank"],
+            )
 
             # long Term Grand Total Values
             ws.write_formula(9, 1, "=SUM(B8:B9)", formats["green_h"])
