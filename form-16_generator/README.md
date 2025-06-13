@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d57c371b-8dfa-467a-9b51-c546cf0c036e)# Sola
+# Sola
 
 ## Overview 🕶️
 
