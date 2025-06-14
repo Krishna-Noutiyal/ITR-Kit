@@ -68,7 +68,7 @@ cd crypto_calculator
 
 Before using CryptoAIS, download your **crypto trade CSVs** from the [E-Filing Portal](https://eportal.incometax.gov.in/) and make sure you have a valid **Form-16 template**.
 
-### Steps:
+### Steps
 
 1. Open the application
 2. Select your **AIS crypto CSV files**

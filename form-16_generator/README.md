@@ -43,7 +43,6 @@ To build the application from scratch for Windows, run the following command:
 > Make sure you have `git` installed on your system.
 > You can type `git -v` directly into your console; if no error is shown, `git` is installed on your system.
 
-
 ```powershell
 git clone --no-checkout https://github.com/Krishna-Noutiyal/ITR-Kit.git
 cd ITR-Kit

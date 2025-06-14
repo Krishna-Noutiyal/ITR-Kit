@@ -1,14 +1,3 @@
-Here's a **professional, polished, and engaging version** of your `README.md` that:
-
-* Fixes typos
-* Enhances formatting
-* Clarifies instructions
-* Adds visual appeal and GitHub-style best practices
-
-You can copy-paste this into your `README.md`:
-
----
-
 # CGC - *Capital Gain Calculator* 📈
 
 ## Overview 🕶️
