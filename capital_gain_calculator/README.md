@@ -1,78 +1,139 @@
-# CGC
+Here's a **professional, polished, and engaging version** of your `README.md` that:
+
+* Fixes typos
+* Enhances formatting
+* Clarifies instructions
+* Adds visual appeal and GitHub-style best practices
+
+You can copy-paste this into your `README.md`:
+
+---
+
+# CGC - *Capital Gain Calculator* 📈
 
 ## Overview 🕶️
 
-CGC is a capital gain vaisualizer designed to automate the calculations of **Stock Market Trades**. It simplifies the process of tax calculations on capital gains by **Stock Markte Trades** . The software extracts trade data from **AIS's Trade Data** and creates `Capital Gain.xlsx` for visualization of **Stock Market Trades** and tax calculation on thoes trades. For using the software you will require the **`AIS's Trade Data`** which can be downloaded from the **[E-Filling Portal](https://eportal.incometax.gov.in/)**.
+**CGC** is a capital gain visualizer designed to automate the calculation of **stock market trades**. It simplifies the process of tax computation on capital gains using data extracted from **AIS Trade Data**, and generates a `Capital Gain.xlsx` file for easy visualization and tax planning.
 
-> [!WARNING]
-The software is created for **Pooja ITR Center**, and is publically available for use and contribution, but the Excel sheets like `ITR-Format` and `Form-16` are kept private. Therefore, these sheets are not shared with this or any other software. **CGC doesn't need `ITR-Format` or `Form-16` to work !!**
+To use CGC, you need to download your **Trade Data** from the [E-Filing Portal](https://eportal.incometax.gov.in/).
 
-## Features ✨
+> ⚠️ **Note:**
+> This software is developed for **Pooja ITR Centre**. It is publicly available for general use, but proprietary Excel sheets like `ITR-Format` and `Form-16` are kept private and are not distributed with this software or any other tools sponsored by **Pooja ITR Centre**.
 
-- Extracts trade details from multiple **Trade CSVs** downloaded from **[E-Filling Portal](https://eportal.incometax.gov.in/)**
-- Generated `Capital Gain.xlxs` for visualizing Tax and Trade Calculationi.
-- User-friendly interface for file selection and output generation.
-- Modern UI
-- Can be compiled to web app, desktop app and apk.
+---
 
-## Installation ⬇️
+## ✨ Features
 
-To install the software you can download the latest relase of the software from the release section of this repository.
+* Extracts trade details from multiple **CSV files** downloaded from [E-Filing Portal](https://eportal.incometax.gov.in/)
+* Generates a `Capital Gain.xlsx` dashboard for tax & trade insights
+* Clean, user-friendly interface
+* Modern UI built using [Flet](https://flet.dev)
+* Can be compiled as a **web app**, **desktop app**, or even an **Android APK**
 
-## Build ⚙️
+---
 
-To build the application from scratch for windows run the following command:
+## 🖼️ Interface Preview
 
-> [!NOTE]
-> Make sure you have `git` and `tar` are installed on your system.
-> To check if git and tar are present you can type `git` and `tar` directly to your console if no error is shown both are installed on your system.
+### Application UI
 
+![CGC Interface](./assets/interface.png)
 
-```powershell
-git archive --remote="https://github.com/Krishna-Noutiyal/ITR-Kit" HEAD:capital_gain_calculator | tar -x
+### Installer
+
+A sleek modern installer provides a rich installation experience.
+![Installing CGC](./assets/installer.png)
+
+---
+
+## ⬇️ Installation
+
+Download the latest release from the Release of this repository.
+
+---
+
+## ⚙️ Building from Source (Windows)
+
+Make sure `git` is installed on your system. Verify with:
+
+```bash
+git -v
 ```
-Head to the capital_gain_calculator folder and run the build command:
+
+Then clone and build:
 
 ```powershell
+git clone --no-checkout https://github.com/Krishna-Noutiyal/ITR-Kit.git
+cd ITR-Kit
+git sparse-checkout init
+git sparse-checkout set capital_gain_calculator
+git checkout main
+cd capital_gain_calculator
 .\build.ps1 -i
 ```
 
-The build script will automatically install the required packages and start the build. The finished build will be present in the `build\windows` directory.
+> This script installs all required packages and builds the app. The final output will be inside the `build/windows` directory.
 
+---
 
-## Usage ⚒️
+## 🛠️ Usage
 
-For using CGC you will need Trading Data, the Trading data can be downloaded from **[E-Filling Portal](https://eportal.incometax.gov.in/)**, the data will be in multiple CSVs that contains all of the short and long term trades performed over the current Financial Year. After downloading the CSVs follow these steps:
+1. Download **Trade CSV files** from the [E-Filing Portal](https://eportal.incometax.gov.in/)
+2. Launch the CGC application
+3. Select the downloaded **CSV files**
+4. Choose the output folder
+5. Click *Submit* – your `Capital Gain.xlsx` dashboard will be generated automatically!
 
-1. Launch the application.
-2. Select the **Trade CSVs**.
-3. Select the Output path.
-4. Click "Submit" to Create stunning `Capital Gain.xlsx` dashboard.
+---
 
-## File Structure 📂
+## 📂 File Structure
 
-The structure of the project is as follows :
+```text
+capital_gain_calculator/
+├── assets/              # Icons and branding assets
+├── config/              # Theme & color configuration
+├── dashboards/          # Visualization dashboards for trades
+├── icons/               # Build-time icons
+├── routes/              # App routing logic
+├── scripts/             # Internal utility scripts
+├── ui/                  # User interface components
+├── main.py              # Application entry point
+├── build.ps1            # Build and setup script
+├── myproject.toml       # Project configuration
+├── requirements.txt     # Python dependencies
+└── README.md            # You are here!
+```
 
-- **Dashboards** : Dashboads used to visualize **Trade Data**.
-- **assests** : Contains the icon file for building CGC.
-- **config** : Color configurations of CGC.
-- **icons** : Software Icons used in Builds. The `assests\icon.png` file is the latest version of icon present in this dicrecory.
-- **routes** : Routes of the software and pages configuration.
-- **scripts** : Internal scripts used by CGC for it's working.
-- **ui** : The Front-end user interface of the software.
-- **README.md** : The thing you are reading now.
-- **`./build.ps1`** : The build script of CGC. Also used to install reqirements.
-- **`./main.py`** : The main file that starts the execution of CGC.
-- **`./myproject.toml`** : Details of CGC project.
-- **`./requirements.txt** : Packages required by CGC.
+---
 
-## Dependencies 🚴
+## 📦 Dependencies
 
-- Python 3.9+
-- Flet
-- Xlsxwriter
-- Pandas
-- Toml
+Make sure the following Python packages are installed:
 
-## Sponsers and Funding 💰
-The project is sponsered by **Pooja ITR Center**. All of the funding is provided by **Pooja ITR Center** with exclusive rights to the software.
+* `Python 3.9+`
+* `flet`
+* `xlsxwriter`
+* `pandas`
+* `toml`
+
+You can install all dependencies using:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 💰 Sponsorship & Licensing
+
+This project is fully sponsored by **Pooja ITR Centre**, which provides funding and maintains rights over proprietary data formats. Although CGC is public, certain Excel templates remain private and are not bundled in this repository.
+
+---
+
+Let me know if you’d like me to:
+
+* Add license info
+* Include contribution guidelines
+* Add shields/badges (build status, python version, etc.)
+* Optimize it for PyPI or packaging
+
+I'm here to help!

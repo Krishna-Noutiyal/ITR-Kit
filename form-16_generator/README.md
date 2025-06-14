@@ -1,4 +1,4 @@
-# Sola
+# Sola - *Form-16 Generator* ✅
 
 ## Overview 🕶️
 
@@ -9,7 +9,15 @@ The software is created for **Pooja ITR Centre**, and is publicly available for 
 
 ---
 
+### Sola Interface
+
+Here is how the sotware looks like
+
 ![Sola Interface](./assets/interface.png)
+
+### Sola Installer
+
+A modern installer for a rich installation fell
 
 ![Installing Sola](./assets/installer.png)
 
@@ -21,7 +29,7 @@ The software is created for **Pooja ITR Centre**, and is publicly available for 
 - Fills Form-16 ( `.xlsx` file ) automatically.
 - User-friendly interface for file selection and output generation.
 - Modern UI
-- Can be compiled to a web app, a desktop app or an APK.
+- Can be compiled to aweb app, a desktop app or an apk.
 
 ## Installation ⬇️
 
@@ -32,12 +40,16 @@ To install the software, you can download the latest release of the software fro
 To build the application from scratch for Windows, run the following command:
 
 > [!NOTE]
-> Make sure you have `git` and `tar` installed on your system.
-> To check if git and tar are present, you can type `git` and `tar` directly into your console; if no error is shown, both are installed on your system.
+> Make sure you have `git` installed on your system.
+> You can type `git -v` directly into your console; if no error is shown, `git` is installed on your system.
 
 
 ```powershell
-git archive --remote="https://github.com/Krishna-Noutiyal/ITR-Kit" HEAD:form-16_generator | tar -x
+git clone --no-checkout https://github.com/Krishna-Noutiyal/ITR-Kit.git
+cd ITR-Kit
+git sparse-checkout init
+git sparse-checkout set capital_gain_calculator
+git checkout main
 ```
 
 Head to the form-16_generator folder and run the build command:
@@ -47,7 +59,6 @@ Head to the form-16_generator folder and run the build command:
 ```
 
 The build script will automatically install the required packages and start the build. The finished build will be present in the `build\windows` directory.
-
 
 ## Usage ⚒️
 
@@ -71,11 +82,11 @@ The structure of the project is as follows :
 - **routes**: Routes of the software and pages configuration.
 - **scripts**: Internal scripts used by Sola for its work.
 - **ui**: The Front-end user interface of the software.
-- **README.md**: The thing you are reading now.
+- **`README.md`**: The thing you are reading now.
 - **`./build.ps1`**: The build script of Sola. Also used to install requirements.
 - **`./main.py`**: The main file that starts the execution of Sola.
 - **`./myproject.toml`**: Details of Sola project.
-- **`./requirements.txt**: Packages required by Sola.
+- **`./requirements.txt`**: Packages required by Sola.
 
 ## Dependencies 🚴
 
@@ -86,4 +97,5 @@ The structure of the project is as follows :
 - Toml
 
 ## Sponsors and Funding 💰
+
 The project is fully sponsored by **Pooja ITR Centre**, which provides all necessary funding. As a result, **Pooja ITR Centre** holds exclusive rights to the software.
