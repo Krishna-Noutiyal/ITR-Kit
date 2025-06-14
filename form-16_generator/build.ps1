@@ -57,7 +57,7 @@ foreach ($arg in $args) {
 if ($installReq) {
     Write-Section "Installing Python Packages"
     try {
-        pip install .\requirements.txt
+        pip install -r .\requirements.txt
         if ($LASTEXITCODE -ne 0) {
             Write-ErrorMsg "Dependency installation failed. Exiting."
             exit 1
